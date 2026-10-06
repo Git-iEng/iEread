@@ -1,0 +1,555 @@
+{% load static %}
+
+<link
+  rel="stylesheet"
+  href="{% static 'css/header.css' %}"
+>
+
+<link
+  rel="stylesheet"
+  href="{% static 'css/demo_form.css' %}"
+>
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css"
+>
+
+
+<header class="header">
+
+  <nav
+    class="nav container"
+    aria-label="Primary navigation"
+  >
+
+    <div class="nav__data">
+
+      <a
+        href="#home"
+        class="nav__logo"
+        data-scroll-to
+        aria-label="iEread home"
+      >
+
+        <img
+          src="{% static 'images/logo.png' %}"
+          alt="iEread"
+          class="logo-img"
+        >
+
+      </a>
+
+
+      <button
+        type="button"
+        class="nav__toggle"
+        id="nav-toggle"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="nav-menu"
+      >
+
+        <i
+          class="ri-menu-line nav__burger"
+          aria-hidden="true"
+        ></i>
+
+        <i
+          class="ri-close-line nav__close"
+          aria-hidden="true"
+        ></i>
+
+      </button>
+
+    </div>
+
+
+    <div
+      class="nav__menu"
+      id="nav-menu"
+    >
+
+      <ul class="nav__list">
+
+
+        <li class="dropdown__item">
+
+          <a
+            href="#types"
+            class="nav__link"
+            data-scroll-to
+          >
+            Features
+          </a>
+
+        </li>
+
+
+        <li class="dropdown__item">
+
+          <a
+            href="#overview"
+            class="nav__link"
+            data-scroll-to
+          >
+            Why iEread
+          </a>
+
+        </li>
+
+
+        <li class="dropdown__item">
+
+          <a
+            href="#process"
+            class="nav__link"
+            data-scroll-to
+          >
+            How it works
+          </a>
+
+        </li>
+
+
+        <li class="dropdown__item">
+
+          <a
+            href="#about-us"
+            class="nav__link"
+            data-scroll-to
+          >
+            About
+          </a>
+
+        </li>
+
+
+        <li class="dropdown__item">
+
+          <a
+            href="#contact"
+            class="nav__link"
+            data-scroll-to
+          >
+            Contact
+          </a>
+
+        </li>
+
+
+        <li class="dropdown__item">
+
+          <button
+  type="button"
+  class="book-demo-btn js-open-demo"
+  data-open-demo
+>
+  Request a demo
+  <i
+    class="ri-arrow-right-line"
+    aria-hidden="true"
+  ></i>
+</button>
+
+        </li>
+
+
+      </ul>
+
+    </div>
+
+  </nav>
+
+</header>
+
+
+<script>
+
+(() => {
+
+  const header =
+    document.querySelector('.header');
+
+  const nav =
+    header?.querySelector('.nav');
+
+  const menu =
+    header?.querySelector('#nav-menu');
+
+  const toggle =
+    header?.querySelector('#nav-toggle');
+
+
+  if (
+    !header ||
+    !nav ||
+    !menu ||
+    !toggle
+  ) {
+    return;
+  }
+
+
+  /* ==============================
+     CLOSE MOBILE MENU
+  ============================== */
+
+  const closeMenu = () => {
+
+    menu.classList.remove(
+      'show-menu'
+    );
+
+    nav.classList.remove(
+      'show-icon'
+    );
+
+    toggle.classList.remove(
+      'show-icon'
+    );
+
+    toggle.setAttribute(
+      'aria-expanded',
+      'false'
+    );
+
+    toggle.setAttribute(
+      'aria-label',
+      'Open menu'
+    );
+
+    document.body.classList.remove(
+      'no-scroll'
+    );
+
+  };
+
+
+  /* ==============================
+     MOBILE MENU TOGGLE
+  ============================== */
+
+  toggle.addEventListener(
+    'click',
+    () => {
+
+      const opening =
+        !menu.classList.contains(
+          'show-menu'
+        );
+
+
+      menu.classList.toggle(
+        'show-menu',
+        opening
+      );
+
+      nav.classList.toggle(
+        'show-icon',
+        opening
+      );
+
+      toggle.classList.toggle(
+        'show-icon',
+        opening
+      );
+
+
+      toggle.setAttribute(
+        'aria-expanded',
+        String(opening)
+      );
+
+
+      toggle.setAttribute(
+        'aria-label',
+        opening
+          ? 'Close menu'
+          : 'Open menu'
+      );
+
+
+      document.body.classList.toggle(
+        'no-scroll',
+        opening
+      );
+
+    }
+  );
+
+
+  /* ==============================
+     SMOOTH SCROLL LINKS
+  ============================== */
+
+  header
+    .querySelectorAll(
+      'a[data-scroll-to]'
+    )
+    .forEach(link => {
+
+      link.addEventListener(
+        'click',
+        event => {
+
+          const target =
+            document.getElementById(
+              link.hash.slice(1)
+            );
+
+
+          if (!target) {
+            return;
+          }
+
+
+          event.preventDefault();
+
+
+          const top =
+            target
+              .getBoundingClientRect()
+              .top
+            +
+            window.scrollY
+            -
+            header.offsetHeight;
+
+
+          window.scrollTo({
+
+            top: top,
+
+            behavior: 'smooth'
+
+          });
+
+
+          closeMenu();
+
+
+          history.replaceState(
+
+            null,
+
+            '',
+
+            link.hash
+
+          );
+
+        }
+      );
+
+    });
+
+
+  /* ==============================
+     REQUEST DEMO
+  ============================== */
+
+  const demoButton =
+    header.querySelector(
+      '.js-open-demo'
+    );
+
+
+  demoButton?.addEventListener(
+    'click',
+    event => {
+
+      event.preventDefault();
+
+      closeMenu();
+
+
+      const modal =
+        document.getElementById(
+          'demoModal'
+        );
+
+
+      if (!modal) {
+
+        console.error(
+          'Request Demo modal not found.'
+        );
+
+        return;
+
+      }
+
+
+      modal.style.display =
+        'flex';
+
+
+      modal.classList.add(
+        'is-open'
+      );
+
+
+      modal.setAttribute(
+        'aria-hidden',
+        'false'
+      );
+
+
+      document.body.style.overflow =
+        'hidden';
+
+    }
+  );
+
+
+  /* ==============================
+     ESCAPE KEY
+  ============================== */
+
+  document.addEventListener(
+    'keydown',
+    event => {
+
+      if (
+        event.key ===
+        'Escape'
+      ) {
+
+        closeMenu();
+
+      }
+
+    }
+  );
+
+
+  /* ==============================
+     CLICK OUTSIDE NAV
+  ============================== */
+
+  document.addEventListener(
+    'click',
+    event => {
+
+      if (
+        !nav.contains(
+          event.target
+        )
+      ) {
+
+        closeMenu();
+
+      }
+
+    }
+  );
+
+
+  /* ==============================
+     ACTIVE NAV LINK
+  ============================== */
+
+  let scheduled = false;
+
+
+  const updateActiveLink = () => {
+
+    const offset =
+      header.offsetHeight + 20;
+
+
+    let sectionId =
+      'home';
+
+
+    document
+      .querySelectorAll(
+        'section[id]'
+      )
+      .forEach(section => {
+
+        if (
+          section
+            .getBoundingClientRect()
+            .top
+          <= offset
+        ) {
+
+          sectionId =
+            section.id;
+
+        }
+
+      });
+
+
+    header
+      .querySelectorAll(
+        'a.nav__link'
+      )
+      .forEach(link => {
+
+        const active =
+          link.hash ===
+          `#${sectionId}`;
+
+
+        link.classList.toggle(
+          'active-link',
+          active
+        );
+
+
+        if (active) {
+
+          link.setAttribute(
+            'aria-current',
+            'location'
+          );
+
+        } else {
+
+          link.removeAttribute(
+            'aria-current'
+          );
+
+        }
+
+      });
+
+
+    scheduled = false;
+
+  };
+
+
+  window.addEventListener(
+    'scroll',
+    () => {
+
+      if (!scheduled) {
+
+        scheduled = true;
+
+        requestAnimationFrame(
+          updateActiveLink
+        );
+
+      }
+
+    },
+    {
+      passive: true
+    }
+  );
+
+
+  window.addEventListener(
+    'load',
+    updateActiveLink
+  );
+
+})();
+
+</script>

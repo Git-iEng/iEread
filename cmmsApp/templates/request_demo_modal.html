@@ -1,0 +1,488 @@
+{% load static %}
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, viewport-fit=cover"
+>
+
+<div
+  class="modal"
+  id="demoModal"
+  aria-hidden="true"
+  style="display:none;"
+>
+
+  <div
+    class="modal__backdrop"
+    data-close-demo
+  ></div>
+
+
+  <div
+    class="modal__dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="demoTitle"
+  >
+
+    <button
+      class="modal__close"
+      type="button"
+      data-close-demo
+      aria-label="Close"
+    >
+      ×
+    </button>
+
+
+    <h2
+      id="demoTitle"
+      class="modal__title"
+    >
+      Request an iEread Demo
+    </h2>
+
+
+    <!-- <p class="modal__subtitle">
+      See how iEread can help automate meter-data extraction,
+      validation and CARL integration. Tell us a little about
+      your meter-reading process and we’ll arrange a walkthrough.
+    </p> -->
+
+
+    <!-- =========================================================
+         CHANGE BY JYOTI - 10-Sep-2026
+         Toast messages displayed inside Request a demo modal
+    ========================================================== -->
+
+    <div
+      id="cmmsToastRoot"
+      class="demo-toast-wrap"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+
+
+    <form
+      id="demoForm"
+      method="post"
+      action="{% url 'cmmsApp:request_demo' %}"
+      novalidate
+    >
+
+      {% csrf_token %}
+
+
+      <div class="grid">
+
+
+        <!-- FULL NAME -->
+
+        <div class="field">
+
+          <label for="full_name">
+            Full Name*
+          </label>
+
+          <input
+            id="full_name"
+            name="full_name"
+            type="text"
+            placeholder="Your name"
+            required
+          >
+
+          <small
+            class="error"
+            data-error-for="full_name"
+          ></small>
+
+        </div>
+
+
+        <!-- COMPANY -->
+
+        <div class="field">
+
+          <label for="company">
+            Company*
+          </label>
+
+          <input
+            id="company"
+            name="company"
+            type="text"
+            placeholder="Your organisation"
+            required
+          >
+
+          <small
+            class="error"
+            data-error-for="company"
+          ></small>
+
+        </div>
+
+
+        <!-- =====================================================
+             EMAIL OTP VERIFICATION
+        ====================================================== -->
+
+        <div class="field demo-email-verification">
+
+          <label for="email">
+            Email*
+          </label>
+
+
+          <div class="demo-email-input-wrap">
+
+
+            <input
+              id="email"
+              name="email"
+              type="email"
+              class="demo-email-input"
+              placeholder="you@company.com"
+              autocomplete="email"
+              required
+            >
+
+
+            <button
+              type="button"
+              id="demo_verify_email"
+              class="demo-verify-email"
+              style="display:none;"
+            >
+              Verify email
+            </button>
+
+
+            <input
+              id="demo_otp"
+              type="text"
+              class="demo-otp-input"
+              maxlength="6"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              placeholder="Enter 6-digit OTP"
+              style="display:none;"
+            >
+
+
+            <div
+              id="demo_otp_actions"
+              class="demo-otp-actions"
+              style="display:none;"
+            >
+
+              <span
+                id="demo_otp_timer"
+                class="demo-otp-timer"
+              >
+                03:00
+              </span>
+
+
+              <button
+                type="button"
+                id="demo_verify_otp"
+                class="demo-verify-otp"
+              >
+                Verify OTP
+              </button>
+
+
+              <button
+                type="button"
+                id="demo_resend_otp"
+                class="demo-resend-otp"
+                style="display:none;"
+              >
+                Resend
+              </button>
+
+            </div>
+
+
+            <span
+              id="demo_email_verified"
+              class="demo-email-verified"
+              style="display:none;"
+            >
+              ✓ Verified
+            </span>
+
+
+          </div>
+
+
+          <small
+            class="error"
+            data-error-for="email"
+          ></small>
+
+
+          <small
+            id="demo_otp_message"
+            class="demo-otp-message"
+            style="display:none;"
+          ></small>
+
+
+          <input
+            type="hidden"
+            name="email_verification_token"
+            id="demo_email_verification_token"
+            value=""
+          >
+
+        </div>
+
+
+        <!-- PHONE -->
+
+        <div class="field">
+
+          <label for="phone">
+            Phone Number*
+          </label>
+
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            placeholder="+61 4xx xxx xxx"
+            required
+          >
+
+          <small
+            class="error"
+            data-error-for="phone"
+          ></small>
+
+        </div>
+
+
+        <!-- COUNTRY -->
+
+        <div class="field">
+
+          <label for="country">
+            Country*
+          </label>
+
+          <select
+            id="country"
+            name="country"
+            required
+          ></select>
+
+          <small
+            class="error"
+            data-error-for="country"
+          ></small>
+
+        </div>
+
+
+        <!-- ADDRESS -->
+
+        <div class="field">
+
+          <label for="address">
+            Address
+          </label>
+
+          <input
+            id="address"
+            name="address"
+            type="text"
+            placeholder="City or business address"
+          >
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <div class="field field--full">
+
+          <label for="message">
+            What would you like to explore?
+          </label>
+
+          <textarea
+            id="message"
+            name="message"
+            rows="3"
+            placeholder="For example: AI meter reading, image or PDF processing..."
+          ></textarea>
+
+        </div>
+
+
+      </div>
+
+
+      <!-- PRIVACY -->
+
+      <p class="privacy">
+        Your privacy is important to us. We’ll only use your
+        information to respond to your iEread enquiry.
+      </p>
+
+
+      <!-- CAPTCHA -->
+
+      <div class="form-captcha">
+
+        <div
+          class="g-recaptcha"
+          data-sitekey="{{ RECAPTCHA_SITE_KEY }}"
+        ></div>
+
+      </div>
+
+
+      <br>
+
+
+      <!-- SUBMIT -->
+
+      <div class="modal__footer">
+
+        <button
+          class="btn-submit"
+          id="submitBtn"
+          type="submit"
+          disabled
+        >
+
+          <span class="btn-label">
+            Request a Demo
+          </span>
+
+          <span
+            class="spinner"
+            aria-hidden="true"
+          ></span>
+
+        </button>
+
+      </div>
+
+
+      <input
+        type="hidden"
+        name="next"
+        value="{% url 'cmmsApp:contact_thanks' %}"
+      >
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<script
+  src="https://www.google.com/recaptcha/api.js"
+  async
+  defer
+></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const modal = document.getElementById("demoModal");
+
+  if (!modal) {
+    return;
+  }
+
+  const openButtons =
+    document.querySelectorAll("[data-open-demo]");
+
+  const closeButtons =
+    modal.querySelectorAll("[data-close-demo]");
+
+
+  function openDemoModal(event) {
+
+    if (event) {
+      event.preventDefault();
+    }
+
+    modal.setAttribute("aria-hidden", "false");
+
+    modal.classList.add("is-open");
+
+    modal.style.display = "flex";
+
+    document.body.style.overflow = "hidden";
+
+    const firstInput =
+      modal.querySelector("#full_name");
+
+    if (firstInput) {
+
+      setTimeout(function () {
+        firstInput.focus();
+      }, 150);
+
+    }
+  }
+
+
+  function closeDemoModal() {
+
+    modal.setAttribute("aria-hidden", "true");
+
+    modal.classList.remove("is-open");
+
+    modal.style.display = "none";
+
+    document.body.style.overflow = "";
+
+  }
+
+
+  openButtons.forEach(function (button) {
+
+    button.addEventListener(
+      "click",
+      openDemoModal
+    );
+
+  });
+
+
+  closeButtons.forEach(function (button) {
+
+    button.addEventListener(
+      "click",
+      closeDemoModal
+    );
+
+  });
+
+
+  document.addEventListener(
+    "keydown",
+    function (event) {
+
+      if (
+        event.key === "Escape" &&
+        modal.getAttribute("aria-hidden") === "false"
+      ) {
+
+        closeDemoModal();
+
+      }
+
+    }
+  );
+
+});
+</script>

@@ -1,0 +1,4959 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+{% load static %}
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+ <title>iEread | AI-Powered Meter Reading & CARL Integration</title>
+
+<meta
+  name="description"
+  content="iEread is an AI-powered meter reading solution that extracts meter readings from images and documents, validates meter data, matches assets and reading points, and integrates with CARL CMMS."
+>
+  <!-- Google Tag Manager -->
+
+  <script>
+
+    (function (w, d, s, l, i) {
+
+      w[l] = w[l] || [];
+
+      w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+
+      var f = d.getElementsByTagName(s)[0],
+
+        j = d.createElement(s),
+
+        dl = l != "dataLayer" ? "&l=" + l : "";
+
+      j.async = true;
+
+      j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+
+      f.parentNode.insertBefore(j, f);
+
+    })(window, document, "script", "dataLayer", "GTM-TKQV8LKX");
+
+  </script>
+
+  <!-- End Google Tag Manager -->
+
+  <!-- Shared site CSS -->
+
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+  <link rel="stylesheet" href="{% static 'css/neplan-about.css' %}">
+
+  <link rel="stylesheet" href="{% static 'css/consult-block.css' %}">
+
+  <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+
+  <style>
+
+    /* iEtrack home page theme. Existing Django templates and section classes stay intact. */
+
+    :root{--boiler-ink:#11263a;--boiler-muted:#5d7081;--boiler-accent:#087f91;--boiler-accent-soft:#e6f7f5;--boiler-surface:#f3f8f8;--boiler-border:#dce9e9}
+
+    html{scroll-behavior:smooth}section[id]{scroll-margin-top:94px}
+
+    .boiler-hero{background:#0d2036;color:white;overflow:hidden;padding:clamp(72px,8vw,112px) 0 80px;isolation:isolate}
+
+    .boiler-hero::before{content:"";position:absolute;inset:-40% -20% auto auto;width:850px;height:850px;background:radial-gradient(circle,#10a5a555,transparent 65%);z-index:-1}
+
+    .boiler-hero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:60px 60px;mask-image:linear-gradient(to right,transparent 25%,black);z-index:-1;pointer-events:none}
+
+    .boiler-hero .boiler-container{width:min(1720px,calc(100% - 48px));max-width:1720px}
+
+    .boiler-hero-inner{grid-template-columns:minmax(0,.82fr) minmax(0,1.38fr);gap:clamp(24px,2.5vw,42px);align-items:center}
+
+    .boiler-hero .boiler-hero-left{transition-delay:.05s}
+
+    .boiler-hero .boiler-hero-media{transition-delay:.22s}
+
+    .boiler-hero-title span{background:linear-gradient(105deg,#64ded3 20%,#c3fff2 48%,#64ded3 75%);background-size:220% 100%;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:hero-shimmer 8s ease-in-out infinite}
+
+    @keyframes hero-shimmer{0%,20%,100%{background-position:100% 0}55%{background-position:0 0}}
+
+    .boiler-hero-kicker{background:#ffffff12;color:#7de2dd;border:1px solid #ffffff27;padding:9px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.11em}
+
+    .boiler-hero-title{font-size:clamp(43px,5vw,72px);letter-spacing:-.055em;line-height:1.05;color:#fff;margin:14px 0 22px;max-width:650px}.boiler-hero-title span{color:#64ded3}
+
+    .boiler-hero-sub{color:#c4d6dd;font-size:clamp(15px,1.2vw,18px);line-height:1.65;max-width:560px}.boiler-hero-sub+.boiler-hero-sub{font-size:15px;color:#9ebbc5}
+
+    .boiler-hero-cta{margin-top:27px;gap:14px}.boiler-btn-primary{background:#8fe3d0!important;color:#0b2d34!important;border-color:#8fe3d0!important;box-shadow:0 16px 38px #0003;font-weight:800}.boiler-btn-primary:hover{background:#b0f3df!important}.boiler-btn-primary i{margin-left:8px}.boiler-btn-ghost{color:white!important;border-color:#ffffff80!important;background:#ffffff0b!important}.boiler-btn-ghost:hover{background:#ffffff21!important}
+
+    .hero-proof{display:flex;gap:10px;flex-wrap:wrap;margin-top:31px}.hero-proof span{font-size:12px;font-weight:650;color:#c3d8dc;padding:7px 10px;border:1px solid #ffffff27;border-radius:30px}.hero-proof i{color:#8fe3d0;margin-right:5px}
+
+    .boiler-hero-card{background:#fff;box-shadow:0 32px 65px #0005;border-radius:18px;overflow:hidden}
+
+    .boiler-hero .boiler-hero-card{transition:transform .45s ease,box-shadow .45s ease}
+
+    .boiler-hero .boiler-hero-card:hover{transform:translateY(-8px);box-shadow:0 40px 85px #0007}
+
+    .boiler-hero .hero-proof span{transition:transform .25s ease,border-color .25s ease,background .25s ease}
+
+    .boiler-hero .hero-proof span:hover{transform:translateY(-3px);border-color:#8fe3d099;background:#8fe3d01a}
+
+    .boiler-hero .boiler-hero-cta a{transition:transform .25s ease,box-shadow .25s ease,background .25s ease}
+
+    .boiler-hero .boiler-hero-cta a:hover{transform:translateY(-3px)}
+
+    .ietrack-real-screen{display:block;width:100%;height:auto;object-fit:contain}
+
+    .ietrack-real-screen-link{display:block;position:relative;cursor:zoom-in}
+
+    .ietrack-real-screen-link::after{content:"View image full size ↗";position:absolute;right:14px;bottom:14px;padding:9px 13px;border-radius:8px;background:#0d2036e8;color:#fff;font-size:13px;font-weight:700}
+
+    .boiler-hero-meta{padding:18px 24px;color:#183344}.boiler-hero-meta h3{color:#16394a}
+
+    .boiler-types{background:#f6faf9;color:#173243}.boiler-types-kicker{color:#087f91}.boiler-types-title{color:#122e3e;font-size:clamp(28px,3.2vw,44px);letter-spacing:-.035em;max-width:700px}.boiler-types-sub{color:#617781;font-size:15px;line-height:1.55}
+
+    .boiler-types-grid{gap:16px}.boiler-type-card{background:white;border:1px solid #dceaea;border-radius:15px;padding:25px;box-shadow:0 8px 24px #0a39400b;transition:transform .2s,box-shadow .2s}.boiler-type-card:hover{transform:translateY(-5px);box-shadow:0 18px 36px #0a394021}.feature-icon{width:45px;height:45px;border-radius:11px;display:grid;place-items:center;background:#e0f5ee;color:#087f91;font-size:19px}.boiler-type-tag{background:transparent;color:#27818c;letter-spacing:.08em;font-weight:800;padding:0;margin-top:11px}.boiler-type-title{color:#102d40;font-size:19px;letter-spacing:-.02em;margin:5px 0}.boiler-type-text{color:#607480;font-size:14px;line-height:1.6}.boiler-type-meta{color:#358290;font-weight:700}.boiler-type-meta span{background:#ecf7f6;border-radius:20px;padding:5px 9px}
+
+    .ietrack-flow-section{background:#f6faf9;padding:0 0 clamp(48px,6vw,86px)}
+
+    .ietrack-flow-figure{margin:0;background:#fff;padding:clamp(10px,2vw,22px);border:1px solid #dceaea;border-radius:18px;box-shadow:0 16px 42px #0a394017}
+
+    .ietrack-flow-figure figcaption{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:3px 3px 18px;color:#16394a;font-size:clamp(19px,2.2vw,26px);font-weight:800}
+
+    .ietrack-flow-figure figcaption small{font-size:13px;font-weight:500;color:#607480}
+
+    .ietrack-flow-figure a{display:block;border-radius:10px;overflow:hidden;cursor:zoom-in}
+
+    .ietrack-flow-figure img{display:block;width:100%;height:auto}
+
+    @media(max-width:650px){.ietrack-flow-figure figcaption{display:block}.ietrack-flow-figure figcaption small{display:block;margin-top:5px}}
+
+    .boiler-types{position:relative;overflow:hidden;background:radial-gradient(circle at 8% 3%,#dff5f0 0,transparent 32%),#f6faf9}
+
+    .boiler-types-head{position:relative;z-index:1}
+
+    .boiler-types-grid{position:relative;z-index:1}
+
+    .boiler-types .boiler-type-card{position:relative;overflow:hidden;border-color:#daeae7;box-shadow:0 12px 30px #0a394012;transition:opacity .6s ease,transform .6s ease,box-shadow .35s ease,border-color .35s ease}
+
+    .boiler-types .boiler-type-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#0a8b91,#7edbca);transform:scaleX(0);transform-origin:left;transition:transform .4s ease}
+
+    .boiler-types .boiler-type-card:hover{transform:translateY(-8px);border-color:#94d7cd;box-shadow:0 22px 44px #0a394026}
+
+    .boiler-types .boiler-type-card:hover::before{transform:scaleX(1)}
+
+    .boiler-types .feature-icon{transition:transform .35s ease,background .35s ease}
+
+    .boiler-types .boiler-type-card:hover .feature-icon{transform:rotate(-6deg) scale(1.1);background:#cdf3e8}
+
+    .boiler-types .boiler-type-card:nth-child(3n + 2) .feature-icon{background:#e3eefb;color:#285ea1}
+
+    .boiler-types .boiler-type-card:nth-child(3n) .feature-icon{background:#eae8fa;color:#6750a4}
+
+    .boiler-types .boiler-type-card:nth-child(3n + 2)::before{background:linear-gradient(90deg,#376cc1,#89b8ec)}
+
+    .boiler-types .boiler-type-card:nth-child(3n)::before{background:linear-gradient(90deg,#7654be,#b9a5e8)}
+
+    .boiler-types .boiler-type-card:nth-child(3n + 2):hover{border-color:#b3d2f2}
+
+    .boiler-types .boiler-type-card:nth-child(3n):hover{border-color:#d2c3ee}
+
+    .boiler-types .boiler-type-card:nth-child(2){transition-delay:.06s}.boiler-types .boiler-type-card:nth-child(3){transition-delay:.12s}.boiler-types .boiler-type-card:nth-child(4){transition-delay:.18s}.boiler-types .boiler-type-card:nth-child(5){transition-delay:.24s}.boiler-types .boiler-type-card:nth-child(6){transition-delay:.3s}
+
+    .boiler-overview{background:white}.boiler-section-title{letter-spacing:-.04em;line-height:1.15}.overview-link{display:inline-flex;gap:8px;align-items:center;color:#087f91;font-weight:800;text-decoration:none;margin-top:18px}.overview-link:hover{text-decoration:underline}
+
+    .ietrack-overview-art{min-height:380px;background:#0d3447;color:white;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:26px;position:relative;overflow:hidden;padding:24px;text-align:center}.ietrack-overview-art::before{content:"";position:absolute;width:410px;height:410px;border:1px solid #ffffff35;border-radius:50%}.ietrack-overview-art::after{content:"";position:absolute;width:290px;height:290px;border:1px solid #ffffff40;border-radius:50%}.ietrack-overview-art>*{z-index:1}.overview-eyebrow{font-size:11px;font-weight:800;letter-spacing:.19em;color:#9ae6d8}.overview-emblem{font-size:clamp(44px,5vw,72px);font-weight:800;letter-spacing:-.075em}.overview-emblem span{color:#8fe3d0}.overview-chips{display:flex;justify-content:center;flex-wrap:wrap;gap:7px}.overview-chips span{background:#ffffff1d;border:1px solid #ffffff5a;border-radius:25px;padding:9px 11px;font-size:12px}.overview-chips i{margin-right:4px}.overview-caption{color:#d0e5e8;font-size:13px}
+
+    .boiler-process{background:#f6faf9}.boiler-timeline-icon{background:#0d3447;color:#92ead8}.boiler-industries{background:white}.boiler-industry-card{padding:24px;box-shadow:none;border-color:#e3ecec}.case-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:11px;background:#e3f5f1;color:#117e8b;font-size:19px;margin-bottom:15px}
+
+    @media(max-width:1050px){.boiler-hero-inner{grid-template-columns:1fr}.boiler-hero-media{max-width:900px;width:100%}}
+
+    @media(max-width:600px){.boiler-hero{padding:65px 0}.boiler-hero-title{font-size:clamp(39px,11vw,58px)}}
+
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.boiler-hero .boiler-hero-left,.boiler-hero .boiler-hero-media,.boiler-hero .boiler-hero-card,.boiler-hero .hero-proof span,.boiler-hero .boiler-hero-cta a{transition:none;transition-delay:0s}.boiler-hero-title span{animation:none}}
+
+    .ietrack-feature-group-title{font-size:clamp(22px,2.5vw,30px);color:#173243;margin:46px 0 18px}.ietrack-feature-group-title:first-of-type{margin-top:28px}
+
+    /* Compact feature catalogue: every name is visible, descriptions open on demand. */
+    .boiler-types .boiler-types-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;align-items:stretch}
+    .boiler-types .ietrack-feature-group-title{margin:27px 0 11px;font-size:clamp(18px,1.8vw,23px);color:#173243}
+    .boiler-types .ietrack-feature{min-width:0;position:relative;background:#fff;border:1px solid #daeae7;border-radius:11px;box-shadow:0 4px 16px #0a394010}
+    .boiler-types .ietrack-feature[open]{border-color:#72bcb7;box-shadow:0 9px 22px #0a394018}
+    .boiler-types .ietrack-feature summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:62px;padding:10px 13px;cursor:pointer}
+    .boiler-types .ietrack-feature summary::-webkit-details-marker{display:none}
+    .boiler-types .ietrack-feature summary:focus-visible{outline:3px solid #087f91;outline-offset:3px;border-radius:9px}
+    .boiler-types .ietrack-feature .feature-icon{width:32px;height:32px;flex:none;border-radius:8px;font-size:14px}
+    .boiler-types .ietrack-feature .boiler-type-title{margin:0;font-size:14px;line-height:1.35;font-weight:700;min-width:0}
+    .boiler-types .ietrack-feature-chevron{color:#39868c;font-size:11px;margin-left:auto;transition:transform .2s}
+    .boiler-types .ietrack-feature[open] .ietrack-feature-chevron{transform:rotate(180deg)}
+    .boiler-types .ietrack-feature .boiler-type-text{margin:0;padding:0 13px 14px 55px;font-size:13px;line-height:1.5}
+    @media(max-width:1080px){.boiler-types .boiler-types-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:720px){.boiler-types .boiler-types-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:430px){.boiler-types .boiler-types-grid{grid-template-columns:1fr}.boiler-types .ietrack-feature summary{min-height:54px}}
+    .ietrack-story{padding:clamp(52px,6vw,88px) 0;background:#fff}
+    .ietrack-story-head{max-width:790px;margin-bottom:25px}.ietrack-story-head h2{color:#16394a;font-size:clamp(30px,3.5vw,46px);line-height:1.12;margin:8px 0 12px}.ietrack-story-head p{color:#607480;line-height:1.7}
+    .ietrack-story-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .ietrack-story-panel{padding:25px;border-radius:18px;border:1px solid #dce9e9;background:#f6faf9;min-height:210px}.ietrack-story-panel:nth-child(2){background:#eff5fc}.ietrack-story-panel:nth-child(3){background:#eaf8f4}
+    .ietrack-story-panel i{font-size:25px;color:#087f91}.ietrack-story-panel h3{font-size:19px;color:#173243;margin:21px 0 9px}.ietrack-story-panel p{color:#5d7081;line-height:1.6;margin:0;font-size:14px}
+    .ietrack-story-panel .ietrack-story-step{font-size:12px;color:#087f91;font-weight:800;letter-spacing:.08em;margin-left:12px}
+    .ietrack-story-note{font-size:13px;line-height:1.6;color:#617781;margin:18px 0 0}
+    .ietrack-about-points{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.ietrack-about-points span{border:1px solid #bfdedb;border-radius:30px;padding:8px 12px;color:#195966;font-weight:700;font-size:13px;background:#f0faf8}
+    @media(max-width:760px){.ietrack-story-grid{grid-template-columns:1fr}.ietrack-story-panel{min-height:0}}
+    .ietrack-workday-visual{margin:0;min-height:500px;border-radius:24px;background:linear-gradient(145deg,#102b41 0%,#0d5360 100%);padding:clamp(20px,3vw,38px);box-shadow:0 24px 55px #0a39402e;position:relative;overflow:hidden;display:flex;align-items:center;isolation:isolate}
+    .ietrack-visual-glow{position:absolute;width:430px;height:430px;right:-140px;top:-180px;border-radius:50%;background:radial-gradient(circle,#3dd7ca66,transparent 67%);animation:ietrack-glow 8s ease-in-out infinite alternate;z-index:-1}
+    .ietrack-visual-grid{position:absolute;inset:0;background-image:linear-gradient(#ffffff0c 1px,transparent 1px),linear-gradient(90deg,#ffffff0c 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(110deg,transparent,#000);z-index:-1}
+    .ietrack-ui-main{width:100%;max-width:570px;background:#f9fcfd;border:1px solid #e2f1ef;border-radius:17px;box-shadow:0 22px 45px #001b2955;transform:rotate(-2deg);animation:ietrack-float 7s ease-in-out infinite}
+    .ietrack-ui-top{height:58px;padding:0 17px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #e1eeef;color:#16394a;font-size:14px;white-space:nowrap}.ietrack-ui-mark{width:31px;height:31px;display:grid;place-items:center;background:#def4ee;color:#098b8b;border-radius:9px}.ietrack-ui-live{margin-left:auto;color:#0b837c;font-size:10px;font-weight:800;letter-spacing:.07em;display:flex;align-items:center;gap:6px}.ietrack-ui-live span{width:7px;height:7px;border-radius:50%;background:#11ab91;box-shadow:0 0 0 3px #d5f3e9;animation:ietrack-pulse 2s ease-in-out infinite}
+    .ietrack-ui-content{padding:20px 20px 29px}.ietrack-ui-eyebrow{color:#3c7580;font-weight:800;font-size:10px;letter-spacing:.08em;margin:0 0 16px;display:flex;justify-content:space-between;gap:8px}.ietrack-ui-eyebrow span{font-weight:500;color:#738d93;letter-spacing:0}
+    .ietrack-ui-numbers{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.ietrack-ui-numbers>div{background:white;border:1px solid #e1eced;border-radius:11px;padding:13px 11px}.ietrack-ui-numbers small{display:block;color:#6b838a;font-size:11px}.ietrack-ui-numbers strong{display:block;color:#183b49;font-size:22px;margin-top:5px}
+    .ietrack-ui-title{display:flex;justify-content:space-between;margin:25px 0 10px;color:#173a49;font-size:12px}.ietrack-ui-title span{color:#728991}
+    .ietrack-ui-timeline{height:26px;display:flex;position:relative;border-radius:7px;overflow:visible;background:#e4edf0}.ietrack-ui-timeline>span{height:100%;display:block}.ietrack-ui-timeline>span:nth-child(1){width:30%;background:#27a89e;border-radius:7px 0 0 7px}.ietrack-ui-timeline>span:nth-child(2){width:12%;background:#edc563}.ietrack-ui-timeline>span:nth-child(3){width:38%;background:#498dbb}.ietrack-ui-timeline>span:nth-child(4){width:20%;background:#27a89e;border-radius:0 7px 7px 0}.ietrack-ui-timeline i{position:absolute;width:4px;height:42px;top:-8px;left:0;border-radius:4px;background:#173c4b;box-shadow:0 0 0 5px #ffffff9c;animation:ietrack-scan 9s ease-in-out infinite alternate}
+    .ietrack-ui-legend{display:flex;gap:13px;flex-wrap:wrap;margin-top:15px;color:#66818a;font-size:10px}.ietrack-ui-legend span{display:flex;align-items:center;gap:5px}.ietrack-ui-legend b{width:7px;height:7px;border-radius:50%}.ietrack-legend-work{background:#27a89e}.ietrack-legend-break{background:#edc563}.ietrack-legend-context{background:#498dbb}
+    .ietrack-ui-float{position:absolute;bottom:27px;left:18px;right:18px;max-width:405px;margin:auto;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #d8ece9;border-radius:14px;padding:15px;box-shadow:0 18px 42px #001b2966;animation:ietrack-float-card 6s ease-in-out infinite}.ietrack-ui-float-icon{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:10px;background:#d8f3ea;color:#087f91}.ietrack-ui-float div{min-width:0}.ietrack-ui-float small,.ietrack-ui-float strong,.ietrack-ui-float div span{display:block}.ietrack-ui-float small{color:#158a86;font-size:9px;font-weight:800;letter-spacing:.09em}.ietrack-ui-float strong{font-size:13px;line-height:1.4;color:#173a49}.ietrack-ui-float div span{font-size:10px;color:#647d86}.ietrack-ui-tick{margin-left:auto;color:#0a9e84}
+    @keyframes ietrack-float{50%{transform:translateY(-8px) rotate(-1deg)}}@keyframes ietrack-float-card{50%{transform:translateY(8px)}}@keyframes ietrack-pulse{50%{box-shadow:0 0 0 8px #d5f3e900}}@keyframes ietrack-scan{to{left:calc(100% - 4px)}}@keyframes ietrack-glow{to{transform:translate(-65px,70px);opacity:.65}}
+    @media(max-width:600px){.ietrack-workday-visual{min-height:445px;padding:15px}.ietrack-ui-main{transform:none}.ietrack-ui-content{padding:15px 13px 55px}.ietrack-ui-float{bottom:19px;left:24px;right:24px}.ietrack-ui-numbers strong{font-size:17px}.ietrack-ui-top{font-size:12px}}
+    @media(prefers-reduced-motion:reduce){.ietrack-visual-glow,.ietrack-ui-main,.ietrack-ui-live span,.ietrack-ui-timeline i,.ietrack-ui-float{animation:none}.ietrack-ui-timeline i{left:45%}}
+    .ietrack-workday-visual figcaption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+
+    /* Feature distribution and category explorer */
+    .ietrack-feature-explorer{display:grid;grid-template-columns:minmax(415px,0.85fr) minmax(0,1.5fr);gap:clamp(18px,2vw,30px);align-items:start;margin-top:30px}
+    .ietrack-feature-chart-area{background:#f4faf8;border:1px solid #dbeae7;border-radius:22px;padding:20px;display:grid;grid-template-columns:155px minmax(0,1fr);grid-template-rows:auto 1fr;gap:8px 12px;align-items:center}
+    .ietrack-feature-chart{width:155px;aspect-ratio:1;margin:0 auto;border-radius:50%;background:conic-gradient(var(--chart-segments));display:grid;place-items:center;box-shadow:0 13px 27px #1763681c;position:relative}
+    .ietrack-feature-chart::after{content:"";position:absolute;inset:27%;background:#f4faf8;border-radius:50%;box-shadow:inset 0 1px 8px #143f4b10}
+    .ietrack-chart-icon{position:absolute;z-index:1;left:var(--icon-x);top:var(--icon-y);transform:translate(-50%,-50%);color:white;font-size:16px;line-height:1;text-shadow:0 1px 5px #163d4b55;pointer-events:none}.ietrack-feature-chart-center{position:relative;z-index:1;display:grid;text-align:center;color:#143d49;line-height:1.1}.ietrack-feature-chart-center strong{font-size:37px}.ietrack-feature-chart-center span{font-size:12px;font-weight:700}
+    .ietrack-feature-chart-caption{text-align:center;font-size:12px;color:#54727a;font-weight:750;letter-spacing:.08em;text-transform:uppercase;margin:0;grid-column:1;grid-row:2}
+    .ietrack-feature-tabs{display:grid;gap:6px;grid-column:2;grid-row:1/3}.ietrack-feature-tab{width:100%;display:flex;align-items:center;gap:10px;padding:12px 9px;border-radius:10px;border:1px solid transparent;background:transparent;color:#284b55;text-align:left;font:inherit;font-size:13px;cursor:pointer;line-height:1.3;transition:background .18s,border-color .18s,transform .18s}.ietrack-feature-tab:hover{background:white;transform:translateX(2px)}.ietrack-feature-tab[aria-pressed="true"]{background:white;border-color:#b9dbd6;box-shadow:0 4px 12px #113e4710}.ietrack-feature-tab:focus-visible{outline:3px solid #087f91;outline-offset:2px}.ietrack-feature-tab span:nth-child(2){flex:1}.ietrack-feature-tab strong{font-size:13px;color:#234550}.ietrack-feature-dot{width:11px;height:11px;flex:none;border-radius:50%;background:var(--feature-color)}
+    .ietrack-feature-panel[hidden]{display:none!important}.ietrack-feature-panel-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:17px}.ietrack-feature-overline{color:#168c89;font-size:11px;letter-spacing:.13em;font-weight:800}.boiler-types .ietrack-feature-panel .ietrack-feature-group-title{margin:6px 0 0;font-size:clamp(22px,2.5vw,30px)}.ietrack-feature-panel-count{white-space:nowrap;font-size:12px;color:#557480;border:1px solid #d8e9e7;padding:6px 9px;border-radius:99px}.boiler-types .ietrack-feature-panel .boiler-types-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.boiler-types .ietrack-feature-panel .ietrack-feature{align-self:start}
+    @media(max-width:950px){.ietrack-feature-explorer{grid-template-columns:1fr}.ietrack-feature-chart-area{grid-template-columns:165px 1fr;column-gap:18px}.ietrack-feature-chart{width:165px}.ietrack-feature-chart-caption{text-align:center}}
+    @media(max-width:570px){.ietrack-feature-chart-area{display:block;padding:18px}.ietrack-feature-chart{width:155px;margin:0 auto 16px}.ietrack-feature-chart-caption{text-align:center;margin-bottom:12px}.boiler-types .ietrack-feature-panel .boiler-types-grid{grid-template-columns:1fr}.ietrack-feature-panel-head{align-items:start;flex-direction:column}}
+    @media(prefers-reduced-motion:reduce){.ietrack-feature-tab{transition:none}}
+
+    .ietrack-about-section{background:linear-gradient(115deg,#fff 0%,#f5faf9 100%)}
+    .ietrack-about-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(330px,.85fr);align-items:center;gap:clamp(26px,5vw,76px)}
+    .ietrack-about-copy .title-meet-ieng-about{max-width:680px;line-height:1.2}
+    .ietrack-about-copy .about-text-abou-ieng{max-width:770px;line-height:1.7}
+    .ietrack-about-caveat{color:#28737b;font-size:14px;font-weight:700;line-height:1.5;margin:19px 0 0}
+    .ietrack-about-highlights{display:grid;gap:12px}.ietrack-about-highlight{display:flex;align-items:flex-start;gap:16px;background:#fff;border:1px solid #dcebe9;border-radius:16px;padding:21px 22px;box-shadow:0 8px 22px #12434b0b}.ietrack-about-icon{display:grid;place-items:center;flex:none;width:44px;height:44px;background:#e0f4ef;color:#087f91;border-radius:12px;font-size:18px}.ietrack-about-highlight h3{margin:0 0 6px;color:#173c4b;font-size:17px}.ietrack-about-highlight p{margin:0;color:#5d7380;font-size:14px;line-height:1.55}
+    @media(max-width:850px){.ietrack-about-layout{grid-template-columns:1fr}.ietrack-about-highlights{grid-template-columns:repeat(3,minmax(0,1fr))}.ietrack-about-highlight{display:block}.ietrack-about-icon{margin-bottom:12px}}
+    @media(max-width:650px){.ietrack-about-highlights{grid-template-columns:1fr}.ietrack-about-highlight{display:flex}.ietrack-about-icon{margin-bottom:0}}
+
+    /* Interactive workday walkthrough */
+    .ietrack-process{background:radial-gradient(circle at 88% 5%,#dcf1ec,transparent 35%),#f6faf9}
+    .ietrack-process-heading{display:flex;align-items:end;justify-content:space-between;gap:32px;margin-bottom:32px}.ietrack-process-heading>div{max-width:670px}.ietrack-process-heading>p{max-width:420px;color:#5f7780;line-height:1.65;margin:0 0 4px}
+    .ietrack-process-layout{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(0,1.15fr);gap:clamp(18px,3vw,36px);align-items:stretch}
+    .ietrack-process-steps{display:grid;gap:11px;align-content:start}.ietrack-process-step{width:100%;display:flex;align-items:center;gap:17px;border:1px solid #deebea;background:#fff;border-radius:16px;padding:17px 18px;color:#193c4c;text-align:left;cursor:pointer;font:inherit;transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease}.ietrack-process-step:hover{transform:translateX(4px);box-shadow:0 10px 24px #144c5814}.ietrack-process-step[aria-pressed="true"]{background:#effaf6;border-color:#49b6a9;box-shadow:0 14px 32px #126d691b}.ietrack-process-step:focus-visible{outline:3px solid #087f91;outline-offset:3px}.ietrack-process-number{display:grid;place-items:center;width:45px;height:45px;border-radius:12px;flex:none;background:#e8f4f2;color:#107d83;font-size:16px;font-weight:850}.ietrack-process-step[aria-pressed="true"] .ietrack-process-number{background:#0d807d;color:white}.ietrack-process-step-copy{display:grid;gap:5px;flex:1}.ietrack-process-step-copy strong{font-size:16px}.ietrack-process-step-copy>span{color:#64808a;font-size:13px;line-height:1.4}.ietrack-process-step>i{color:#79a6a6;font-size:13px}
+    .ietrack-process-stage{position:relative;overflow:hidden;min-height:420px;display:flex;flex-direction:column;background:linear-gradient(140deg,#10364c,#116373);color:#fff;border-radius:24px;box-shadow:0 24px 47px #0e4d612e;padding:clamp(24px,3vw,36px)}.ietrack-process-stage::before{content:"";position:absolute;right:-105px;top:-130px;width:340px;height:340px;border:1px solid #ffffff26;border-radius:50%;box-shadow:0 0 0 58px #ffffff09,0 0 0 116px #ffffff07;pointer-events:none;animation:ietrack-process-glow 9s ease-in-out infinite alternate}.ietrack-process-stage-top,.ietrack-process-stage-foot{position:relative;z-index:1;display:flex;gap:10px;justify-content:space-between;align-items:center;font-size:12px;color:#c3e9e7}.ietrack-process-stage-top>span:first-child{font-weight:750}.ietrack-process-stage-top i{margin-right:5px}.ietrack-process-live{display:flex;align-items:center;gap:7px}.ietrack-process-live i{width:7px;height:7px;background:#81e7be;border-radius:50%;box-shadow:0 0 0 4px #81e7be23;animation:ietrack-process-pulse 2.5s ease-in-out infinite}
+    .ietrack-process-panel{position:relative;z-index:1;margin:auto 0;padding:24px 0;animation:ietrack-process-in .38s ease both}.ietrack-process-panel[hidden]{display:none!important}.ietrack-process-eyebrow{color:#83ead8;letter-spacing:.14em;font-size:11px;font-weight:850}.ietrack-process-panel h3{font-size:clamp(25px,2.6vw,37px);line-height:1.13;margin:13px 0}.ietrack-process-panel>p{font-size:14px;line-height:1.65;color:#d0e5e7;max-width:590px;margin:0 0 21px}.ietrack-process-demo{display:flex;align-items:center;gap:17px;max-width:570px;border:1px solid #ffffff38;background:#ffffff12;border-radius:15px;padding:16px}.ietrack-demo-icon{display:grid;place-items:center;width:48px;height:48px;background:#ffffff26;color:#a3efdf;border-radius:12px;flex:none;font-size:20px}.ietrack-demo-info{flex:1;min-width:0}.ietrack-demo-info small{display:block;color:#94ddd6;font-size:10px;font-weight:800;letter-spacing:.1em;margin-bottom:5px}.ietrack-demo-info strong{display:block;font-size:13px;font-weight:700;line-height:1.35}.ietrack-demo-track{height:7px;border-radius:99px;background:#ffffff39;margin-top:13px;overflow:hidden}.ietrack-demo-track>span{display:block;height:100%;background:#71ddc1;border-radius:99px;animation:ietrack-track-fill .9s ease both}.ietrack-demo-track.multi{display:flex;gap:3px;background:transparent}.ietrack-demo-track.multi span:nth-child(1){width:26%;background:#74dfc1}.ietrack-demo-track.multi span:nth-child(2){width:15%;background:#f3c877}.ietrack-demo-track.multi span:nth-child(3){width:36%;background:#88bded}.ietrack-demo-track.multi span:nth-child(4){width:23%;background:#74dfc1}.ietrack-demo-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.ietrack-demo-pills span{border:1px solid #ffffff46;border-radius:30px;padding:3px 8px;color:#d1f3ed;font-size:10px}.ietrack-process-stage-foot{border-top:1px solid #ffffff25;padding-top:15px;justify-content:flex-start;line-height:1.4}
+    @keyframes ietrack-process-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes ietrack-process-glow{to{transform:translate(-28px,27px)}}@keyframes ietrack-process-pulse{50%{box-shadow:0 0 0 9px #81e7be00}}@keyframes ietrack-track-fill{from{transform:scaleX(.12);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
+    @media(max-width:850px){.ietrack-process-heading{display:block}.ietrack-process-heading>p{max-width:680px;margin-top:14px}.ietrack-process-layout{grid-template-columns:1fr}.ietrack-process-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.ietrack-process-stage{min-height:390px}}
+    @media(max-width:580px){.ietrack-process-steps{grid-template-columns:1fr}.ietrack-process-step{padding:12px 14px}.ietrack-process-stage{min-height:410px}.ietrack-process-live{display:none}}
+    @media(prefers-reduced-motion:reduce){.ietrack-process-step,.ietrack-process-stage::before,.ietrack-process-live i,.ietrack-process-panel,.ietrack-demo-track>span{animation:none;transition:none}}
+
+    /* Role-specific use cases */
+    .ietrack-use-section{padding:clamp(58px,7vw,100px) 0;background:#fff}.ietrack-use-header{display:flex;align-items:end;justify-content:space-between;gap:35px;margin-bottom:30px}.ietrack-use-header>div{max-width:700px}.ietrack-use-header>p{max-width:420px;color:#657d85;line-height:1.65;margin:0 0 4px}
+    .ietrack-use-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.ietrack-use-card{--use-accent:#159e99;position:relative;display:flex;flex-direction:column;min-width:0;min-height:252px;padding:25px;background:#f8fbfa;border:1px solid #ddebe9;border-radius:19px;overflow:hidden;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}.ietrack-use-card::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:var(--use-accent)}.ietrack-use-card:nth-child(3n + 2){--use-accent:#5596c7;background:#f7fafd}.ietrack-use-card:nth-child(3n){--use-accent:#9375c1;background:#faf9fc}.ietrack-use-card:hover{transform:translateY(-5px);box-shadow:0 17px 34px #113d4d17;border-color:#c3dedc}.ietrack-use-card-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.ietrack-use-icon{width:45px;height:45px;display:grid;place-items:center;background:#fff;color:var(--use-accent);border:1px solid #dbe9e9;border-radius:13px;font-size:19px}.ietrack-use-index{font-size:11px;color:#81969d;letter-spacing:.13em;font-weight:800}.ietrack-use-card h3{font-size:21px;color:#173c4b;margin:20px 0 5px}.ietrack-use-card>strong{font-size:13px;color:var(--use-accent);line-height:1.4}.ietrack-use-card>p{color:#607780;font-size:14px;line-height:1.6;margin:11px 0 18px}.ietrack-use-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:auto}.ietrack-use-tags span{font-size:11px;color:#2c5966;background:#e7f1f1;border-radius:50px;padding:6px 9px;font-weight:700}.ietrack-use-note{color:#5d7780;font-size:13px;margin:21px 0 0;line-height:1.5}.ietrack-use-note i{color:#168b8b;margin-right:6px}
+    @media(max-width:920px){.ietrack-use-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ietrack-use-header{display:block}.ietrack-use-header>p{max-width:680px;margin-top:13px}}
+    @media(max-width:580px){.ietrack-use-grid{grid-template-columns:1fr}.ietrack-use-card{min-height:0}}
+    @media(prefers-reduced-motion:reduce){.ietrack-use-card{transition:none}}
+
+    /* Product-specific mission, vision and values */
+    .ietrack-mvv{padding:clamp(58px,7vw,98px) 0;background:linear-gradient(130deg,#f4faf8,#fff 62%)}.ietrack-mvv-head{max-width:740px;margin-bottom:25px}.ietrack-mvv .boiler-mvv-tabs{margin-bottom:24px}.ietrack-mvv .boiler-mvv-content-wrap{overflow:hidden;border:1px solid #dceae8;border-radius:22px;background:white;box-shadow:0 19px 44px #123f4a12}.ietrack-mvv .boiler-mvv-content{min-height:410px;align-items:center;gap:clamp(20px,4vw,60px)}.ietrack-mvv .boiler-mvv-text{padding:clamp(24px,3.5vw,50px);max-width:670px}.ietrack-mvv .boiler-mvv-text h2{margin:10px 0 15px;color:#143e4d}.ietrack-mvv .boiler-mvv-text p{line-height:1.7;color:#5e7481}.ietrack-mvv-kicker{color:#0d8884;font-size:11px;font-weight:850;letter-spacing:.14em}.ietrack-mvv-points{list-style:none;display:grid;gap:11px;margin:22px 0 0;padding:0}.ietrack-mvv-points li{position:relative;padding-left:25px;color:#285464;font-size:14px;line-height:1.4}.ietrack-mvv-points li::before{content:"✓";position:absolute;left:0;top:0;color:#0d9a86;font-weight:800}.ietrack-mvv .boiler-mvv-image{align-self:stretch;min-height:350px;overflow:hidden;border-radius:0 21px 21px 0}.ietrack-mvv .boiler-mvv-image img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:white}.ietrack-mvv .boiler-mvv-content.is-active .boiler-mvv-image img{animation:ietrack-mvv-appear .7s ease both}@keyframes ietrack-mvv-appear{from{opacity:.55;transform:scale(1.04)}to{opacity:1;transform:scale(1)}}
+    @media(max-width:800px){.ietrack-mvv .boiler-mvv-content{min-height:0}.ietrack-mvv .boiler-mvv-image{min-height:270px;border-radius:0 0 21px 21px}.ietrack-mvv .boiler-mvv-text{padding:28px}}
+    @media(prefers-reduced-motion:reduce){.ietrack-mvv .boiler-mvv-content.is-active .boiler-mvv-image img{animation:none}}
+
+    .boiler-types-kicker,
+    .boiler-eyebrow,
+    .eyebrow-neplan-what-we-bring {
+      text-transform: none !important;
+}
+
+    /* Full overview artwork, aligned to the text without cropping. */
+    #overview .boiler-overview-media {
+      min-width: 0 !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+    }
+    #overview .ietrack-workday-image {
+      margin: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      overflow: visible !important;
+    }
+    #overview .ietrack-workday-image img {
+      display: block !important;
+      min-height: 0 !important;
+      object-fit: contain !important;
+      object-position: center !important;
+      border-radius: 24px;
+      transform: none !important;
+      transition: none !important;
+    }
+    @media (min-width: 901px) {
+      #overview .boiler-overview-grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+        gap: clamp(28px, 4vw, 64px) !important;
+        align-items: start !important;
+      }
+      #overview .boiler-overview-media {
+        position: relative !important;
+        align-self: start !important;
+      }
+      #overview .ietrack-workday-image {
+        position: absolute !important;
+        inset: 0 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #overview .ietrack-workday-image img {
+        width: auto !important;
+        height: auto !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+      }
+    }
+    @media (max-width: 900px) {
+      #overview .boiler-overview-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+      }
+      #overview .boiler-overview-media { height: auto !important; }
+      #overview .ietrack-workday-image { position: relative !important; height: auto !important; }
+      #overview .ietrack-workday-image img {
+        width: 100% !important;
+        height: auto !important;
+        max-width: 100% !important;
+        max-height: none !important;
+      }
+    }
+
+    @media (min-width: 901px) {
+      #overview .boiler-overview-main {
+        max-width: 560px;
+        justify-self: end;
+        width: 100%;
+      }
+      #overview .boiler-overview-main .boiler-section-title {
+        font-size: clamp(30px, 2.8vw, 42px);
+      }
+      #overview .boiler-overview-main .boiler-section-text {
+        font-size: 17px;
+        line-height: 1.8;
+      }
+      #overview .boiler-overview-media { justify-self: start; width: 100%; }
+    }
+
+   /* =========================================================
+   iEread Theme Override
+   ========================================================= */
+
+:root {
+  --boiler-ink: #0b2440;
+  --boiler-muted: #64748b;
+  --boiler-accent: #1473e6;
+  --boiler-accent-soft: #eef5ff;
+  --boiler-surface: #f5f7fb;
+  --boiler-border: #dfe7f1;
+}
+
+/* Hero background */
+.boiler-hero {
+  background:
+    radial-gradient(
+      circle at 85% 20%,
+      rgba(81, 69, 229, 0.28),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #061f39 0%,
+      #082c52 100%
+    ) !important;
+}
+
+/* Hero highlighted heading */
+.boiler-hero-title span {
+  background: linear-gradient(
+    105deg,
+    #38bdf8 10%,
+    #5b8def 48%,
+    #7257e8 82%
+  ) !important;
+
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Small hero label */
+.boiler-hero-kicker {
+  color: #43c7ff !important;
+  border-color: rgba(67, 199, 255, 0.35) !important;
+}
+
+/* Main button */
+.boiler-btn-primary {
+  background: linear-gradient(
+    135deg,
+    #1473e6,
+    #5145e5
+  ) !important;
+
+  color: #ffffff !important;
+  border-color: transparent !important;
+
+  box-shadow:
+    0 14px 32px
+    rgba(81, 69, 229, 0.30) !important;
+}
+
+.boiler-btn-primary:hover {
+  background: linear-gradient(
+    135deg,
+    #0868dc,
+    #4338ca
+  ) !important;
+}
+
+/* Hero feature pills */
+.hero-proof i {
+  color: #38bdf8 !important;
+}
+
+.hero-proof span:hover {
+  border-color: rgba(56, 189, 248, 0.60) !important;
+  background: rgba(56, 189, 248, 0.10) !important;
+}
+
+/* Section headings */
+.boiler-types-kicker,
+.boiler-eyebrow,
+.eyebrow-neplan-what-we-bring {
+  color: #1473e6 !important;
+}
+
+/* Feature section */
+.boiler-types {
+  background:
+    radial-gradient(
+      circle at 8% 3%,
+      #e8f2ff 0,
+      transparent 32%
+    ),
+    #f7f9fd !important;
+}
+
+/* Feature icons */
+.feature-icon {
+  background: #eef5ff !important;
+  color: #1473e6 !important;
+}
+
+/* Feature category */
+.ietrack-feature-chart-area {
+  background: #f4f7ff !important;
+  border-color: #dce5f5 !important;
+}
+
+.ietrack-feature-chart::after {
+  background: #f4f7ff !important;
+}
+
+/* Selected feature category */
+.ietrack-feature-tab[aria-pressed="true"] {
+  background: #ffffff !important;
+  border-color: #9dbcf7 !important;
+
+  box-shadow:
+    0 5px 15px
+    rgba(20, 115, 230, 0.12) !important;
+}
+
+.ietrack-feature-tab:focus-visible {
+  outline-color: #1473e6 !important;
+}
+
+/* Feature boxes */
+.boiler-types .ietrack-feature[open] {
+  border-color: #91b5f5 !important;
+
+  box-shadow:
+    0 9px 22px
+    rgba(20, 115, 230, 0.10) !important;
+}
+
+.ietrack-feature-overline {
+  color: #1473e6 !important;
+}
+
+/* Overview links */
+.overview-link {
+  color: #1473e6 !important;
+}
+
+/* How it works background */
+.ietrack-process {
+  background:
+    radial-gradient(
+      circle at 88% 5%,
+      #e4e8ff,
+      transparent 35%
+    ),
+    #f6f8fc !important;
+}
+
+/* Selected process step */
+.ietrack-process-step[aria-pressed="true"] {
+  background: #eef4ff !important;
+  border-color: #1473e6 !important;
+
+  box-shadow:
+    0 14px 32px
+    rgba(20, 115, 230, 0.14) !important;
+}
+
+/* Process step number */
+.ietrack-process-number {
+  background: #edf4ff !important;
+  color: #1473e6 !important;
+}
+
+.ietrack-process-step[aria-pressed="true"]
+.ietrack-process-number {
+  background: linear-gradient(
+    135deg,
+    #1473e6,
+    #5145e5
+  ) !important;
+
+  color: #ffffff !important;
+}
+
+/* Process right-side panel */
+.ietrack-process-stage {
+  background: linear-gradient(
+    140deg,
+    #082b4d,
+    #30389d
+  ) !important;
+}
+
+.ietrack-process-eyebrow {
+  color: #6fd5ff !important;
+}
+
+.ietrack-demo-icon {
+  color: #78d8ff !important;
+}
+
+/* Use case cards */
+.ietrack-use-card {
+  --use-accent: #1473e6 !important;
+}
+
+.ietrack-use-card:nth-child(3n + 2) {
+  --use-accent: #5145e5 !important;
+}
+
+.ietrack-use-card:nth-child(3n) {
+  --use-accent: #28aee8 !important;
+}
+
+/* About section */
+.ietrack-about-section {
+  background:
+    linear-gradient(
+      115deg,
+      #ffffff 0%,
+      #f5f7ff 100%
+    ) !important;
+}
+
+.ietrack-about-icon {
+  background: #eef5ff !important;
+  color: #1473e6 !important;
+}
+/* Reduce extra space above iEread Hero content */
+.boiler-hero {
+  padding-top: 38px !important;
+  padding-bottom: 65px !important;
+}
+
+.boiler-hero-inner {
+  align-items: center !important;
+}
+
+@media (max-width: 600px) {
+  .boiler-hero {
+    padding-top: 32px !important;
+    padding-bottom: 48px !important;
+  }
+}
+/* =========================================================
+   iEread Overview - New Design
+========================================================= */
+
+.ieread-overview {
+  padding: clamp(65px, 7vw, 100px) 0;
+  background:
+    radial-gradient(
+      circle at 92% 10%,
+      rgba(81, 69, 229, 0.08),
+      transparent 30%
+    ),
+    #ffffff;
+}
+
+
+.ieread-overview-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 0.9fr)
+    minmax(0, 1.1fr);
+
+  gap: clamp(45px, 6vw, 90px);
+  align-items: center;
+}
+
+
+/* LEFT */
+
+.ieread-section-label {
+  display: inline-block;
+
+  color: #1473e6;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  letter-spacing: 0.10em;
+
+  margin-bottom: 16px;
+}
+
+
+.ieread-overview-copy h2 {
+  margin: 0 0 24px;
+
+  max-width: 620px;
+
+  color: #082442;
+
+  font-size: clamp(38px, 4vw, 58px);
+
+  line-height: 1.08;
+
+  letter-spacing: -0.045em;
+}
+
+
+.ieread-overview-copy h2 span {
+  color: #5145e5;
+}
+
+
+.ieread-overview-copy > p {
+  max-width: 630px;
+
+  color: #6a7d95;
+
+  font-size: 17px;
+
+  line-height: 1.8;
+
+  margin: 0 0 16px;
+}
+
+
+/* BENEFITS */
+
+.ieread-overview-benefits {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+
+  margin-top: 27px;
+}
+
+
+.ieread-overview-benefits > div {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 13px 14px;
+
+  border: 1px solid #e2e9f4;
+
+  border-radius: 13px;
+
+  background: #f8faff;
+}
+
+
+.ieread-overview-benefits i {
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  flex: none;
+
+  border-radius: 10px;
+
+  background: #eaf3ff;
+
+  color: #1473e6;
+}
+
+
+.ieread-overview-benefits strong,
+.ieread-overview-benefits small {
+  display: block;
+}
+
+
+.ieread-overview-benefits strong {
+  color: #17324f;
+
+  font-size: 13px;
+}
+
+
+.ieread-overview-benefits small {
+  margin-top: 3px;
+
+  color: #7b8b9d;
+
+  font-size: 10px;
+}
+
+
+/* LINK */
+
+.ieread-overview-link {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 27px;
+
+  color: #1473e6;
+
+  font-weight: 800;
+
+  text-decoration: none;
+}
+
+
+.ieread-overview-link:hover {
+  gap: 15px;
+}
+
+
+/* RIGHT CARD */
+
+.ieread-overview-card {
+  padding: 24px;
+
+  border: 1px solid #dfe7f3;
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f9fbff,
+      #f2f6fd
+    );
+
+  box-shadow:
+    0 28px 65px
+    rgba(28, 61, 105, 0.14);
+}
+
+
+/* HEADER */
+
+.ieread-overview-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+
+  padding-bottom: 20px;
+
+  border-bottom: 1px solid #dee6f1;
+}
+
+
+.ieread-overview-card-head > div {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+
+.ieread-overview-card-icon {
+  width: 46px;
+  height: 46px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1473e6,
+      #5145e5
+    );
+
+  color: #ffffff;
+
+  font-size: 19px;
+}
+
+
+.ieread-overview-card-head strong,
+.ieread-overview-card-head small {
+  display: block;
+}
+
+
+.ieread-overview-card-head strong {
+  color: #0c2a48;
+
+  font-size: 16px;
+}
+
+
+.ieread-overview-card-head small {
+  color: #8491a3;
+
+  margin-top: 3px;
+
+  font-size: 11px;
+}
+
+
+.ieread-system-status {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 7px 11px;
+
+  border-radius: 30px;
+
+  background: #ebfbf1;
+
+  color: #148146;
+
+  font-size: 11px;
+
+  font-weight: 700;
+}
+
+
+.ieread-system-status i {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #22c55e;
+}
+
+
+/* PIPELINE */
+
+.ieread-pipeline-row {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-top: 13px;
+
+  padding: 13px;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 13px;
+}
+
+
+.ieread-pipeline-number {
+  color: #9aa7b8;
+
+  font-size: 10px;
+
+  font-weight: 800;
+}
+
+
+.ieread-pipeline-icon {
+  width: 39px;
+  height: 39px;
+
+  display: grid;
+  place-items: center;
+
+  flex: none;
+
+  border-radius: 10px;
+
+  background: #eaf3ff;
+
+  color: #1473e6;
+}
+
+
+.ieread-pipeline-icon.purple {
+  background: #f0ecff;
+  color: #5145e5;
+}
+
+
+.ieread-pipeline-icon.cyan {
+  background: #e9f9ff;
+  color: #0ca7df;
+}
+
+
+.ieread-pipeline-copy {
+  flex: 1;
+}
+
+
+.ieread-pipeline-copy small,
+.ieread-pipeline-copy strong,
+.ieread-pipeline-copy span {
+  display: block;
+}
+
+
+.ieread-pipeline-copy small {
+  color: #8796a8;
+
+  font-size: 8px;
+
+  letter-spacing: .09em;
+
+  font-weight: 800;
+}
+
+
+.ieread-pipeline-copy strong {
+  margin-top: 3px;
+
+  color: #17304d;
+
+  font-size: 13px;
+}
+
+
+.ieread-pipeline-copy span {
+  margin-top: 3px;
+
+  color: #7b8b9d;
+
+  font-size: 10px;
+}
+
+
+.ieread-pipeline-done {
+  width: 25px;
+  height: 25px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: #eafaf0;
+
+  color: #16a34a;
+
+  font-size: 10px;
+}
+
+
+/* EXTRACTED RESULT */
+
+.ieread-result-card {
+  margin-top: 17px;
+
+  padding: 17px;
+
+  background: #ffffff;
+
+  border-radius: 15px;
+
+  border: 1px solid #dfe7f1;
+}
+
+
+.ieread-result-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 13px;
+
+  color: #102b48;
+
+  font-size: 13px;
+
+  font-weight: 800;
+}
+
+
+.ieread-valid-badge {
+  padding: 5px 9px;
+
+  border-radius: 30px;
+
+  background: #eafaf0;
+
+  color: #168245;
+
+  font-size: 9px;
+}
+
+
+.ieread-result-fields {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 8px;
+}
+
+
+.ieread-result-fields > div {
+  padding: 10px;
+
+  border-radius: 9px;
+
+  background: #f5f7fb;
+}
+
+
+.ieread-result-fields small,
+.ieread-result-fields strong {
+  display: block;
+}
+
+
+.ieread-result-fields small {
+  color: #8694a6;
+
+  font-size: 8px;
+}
+
+
+.ieread-result-fields strong {
+  margin-top: 5px;
+
+  color: #0b2948;
+
+  font-size: 12px;
+}
+
+
+/* CARL */
+
+.ieread-carl-ready {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-top: 16px;
+
+  padding: 14px;
+
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      100deg,
+      #eef5ff,
+      #f2efff
+    );
+
+  border: 1px solid #dce4fb;
+}
+
+
+.ieread-carl-ready > span {
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1473e6,
+      #5145e5
+    );
+
+  color: #ffffff;
+}
+
+
+.ieread-carl-ready div {
+  flex: 1;
+}
+
+
+.ieread-carl-ready small,
+.ieread-carl-ready strong {
+  display: block;
+}
+
+
+.ieread-carl-ready small {
+  color: #73849c;
+
+  font-size: 8px;
+
+  letter-spacing: .08em;
+}
+
+
+.ieread-carl-ready strong {
+  margin-top: 3px;
+
+  color: #122e4c;
+
+  font-size: 12px;
+}
+
+
+.ieread-carl-ready > i {
+  color: #5145e5;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+
+  .ieread-overview-layout {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .ieread-overview-benefits {
+    grid-template-columns: 1fr;
+  }
+
+  .ieread-result-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ieread-overview-card {
+    padding: 17px;
+  }
+
+}
+
+/* Reduce extra space above Overview section */
+.ieread-overview {
+  padding-top: 25px !important;
+  padding-bottom: 70px !important;
+}
+
+.ieread-overview-layout {
+  align-items: start !important;
+}
+
+.ieread-overview-copy,
+.ieread-overview-card {
+  margin-top: 0 !important;
+}
+/* =========================================================
+   iEread Workflow
+========================================================= */
+
+.ieread-flow-section {
+  padding: clamp(60px, 7vw, 95px) 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f7f9fd 0%,
+      #ffffff 100%
+    );
+}
+
+
+.ieread-flow-heading {
+  max-width: 780px;
+
+  margin: 0 auto 48px;
+
+  text-align: center;
+}
+
+
+.ieread-flow-heading > span {
+  color: #1473e6;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: .12em;
+}
+
+
+.ieread-flow-heading h2 {
+  margin: 12px 0 14px;
+
+  color: #092747;
+
+  font-size: clamp(34px, 4vw, 52px);
+
+  line-height: 1.1;
+
+  letter-spacing: -.04em;
+}
+
+
+.ieread-flow-heading h2 strong {
+  color: #5145e5;
+}
+
+
+.ieread-flow-heading p {
+  margin: 0 auto;
+
+  max-width: 650px;
+
+  color: #74859a;
+
+  font-size: 16px;
+
+  line-height: 1.7;
+}
+
+
+/* PIPELINE */
+
+.ieread-flow-pipeline {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+}
+
+
+.ieread-flow-step {
+  position: relative;
+
+  width: 175px;
+  min-height: 190px;
+
+  padding: 24px 16px 20px;
+
+  border: 1px solid #e1e7f0;
+
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  text-align: center;
+
+  box-shadow:
+    0 12px 28px
+    rgba(35, 68, 110, .07);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+
+.ieread-flow-step:hover {
+  transform: translateY(-7px);
+
+  box-shadow:
+    0 20px 40px
+    rgba(35, 68, 110, .14);
+}
+
+
+.ieread-flow-step-number {
+  position: absolute;
+
+  top: 13px;
+  right: 14px;
+
+  color: #a2adbc;
+
+  font-size: 10px;
+
+  font-weight: 800;
+}
+
+
+.ieread-flow-step-icon {
+  width: 58px;
+  height: 58px;
+
+  margin: 8px auto 18px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 16px;
+
+  background: #eaf3ff;
+
+  color: #1473e6;
+
+  font-size: 23px;
+}
+
+
+.ieread-flow-step-icon.purple {
+  background: #f0edff;
+  color: #5145e5;
+}
+
+
+.ieread-flow-step-icon.cyan {
+  background: #e7f8ff;
+  color: #16a5d8;
+}
+
+
+.ieread-flow-step-icon.green {
+  background: #eafaf0;
+  color: #16a34a;
+}
+
+
+.ieread-flow-step-icon.carl {
+  background:
+    linear-gradient(
+      135deg,
+      #1473e6,
+      #5145e5
+    );
+
+  color: #ffffff;
+}
+
+
+.ieread-flow-step h3 {
+  margin: 0 0 8px;
+
+  color: #12304e;
+
+  font-size: 17px;
+}
+
+
+.ieread-flow-step p {
+  margin: 0;
+
+  color: #7a899b;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+}
+
+
+/* CONNECTORS */
+
+.ieread-flow-connector {
+  position: relative;
+
+  width: 42px;
+
+  flex: none;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: #478cf0;
+}
+
+
+.ieread-flow-connector span {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  height: 2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #61bdf7,
+      #6759ec
+    );
+}
+
+
+.ieread-flow-connector i {
+  position: relative;
+
+  margin-left: auto;
+
+  padding-left: 5px;
+
+  background: #f9fbfe;
+
+  font-size: 12px;
+
+  animation:
+    ieread-arrow-move
+    1.7s ease-in-out infinite;
+}
+
+
+@keyframes ieread-arrow-move {
+
+  50% {
+    transform: translateX(5px);
+  }
+
+}
+
+
+/* RESULT */
+
+.ieread-flow-result {
+  max-width: 950px;
+
+  margin: 35px auto 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+
+  padding: 18px 22px;
+
+  border: 1px solid #dce8f6;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      100deg,
+      #f1f7ff,
+      #f4f1ff
+    );
+}
+
+
+.ieread-flow-result-icon {
+  width: 46px;
+  height: 46px;
+
+  flex: none;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: #e4f9ec;
+
+  color: #16a34a;
+
+  font-size: 22px;
+}
+
+
+.ieread-flow-result > div:nth-child(2) {
+  flex: 1;
+}
+
+
+.ieread-flow-result small,
+.ieread-flow-result strong {
+  display: block;
+}
+
+
+.ieread-flow-result > div:nth-child(2) small {
+  color: #7e8d9f;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  letter-spacing: .11em;
+}
+
+
+.ieread-flow-result > div:nth-child(2) strong {
+  margin-top: 4px;
+
+  color: #173653;
+
+  font-size: 14px;
+}
+
+
+.ieread-flow-result-data {
+  display: flex;
+
+  gap: 8px;
+}
+
+
+.ieread-flow-result-data span {
+  padding: 8px 11px;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #183654;
+
+  font-size: 11px;
+
+  font-weight: 700;
+}
+
+
+.ieread-flow-result-data small {
+  margin-bottom: 3px;
+
+  color: #8b98a8;
+
+  font-size: 8px;
+
+  font-weight: 500;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1050px) {
+
+  .ieread-flow-pipeline {
+    display: grid;
+
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+  .ieread-flow-step {
+    width: auto;
+  }
+
+  .ieread-flow-connector {
+    display: none;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .ieread-flow-pipeline {
+    grid-template-columns: 1fr;
+  }
+
+  .ieread-flow-step {
+    min-height: 0;
+  }
+
+  .ieread-flow-result {
+    align-items: flex-start;
+
+    flex-wrap: wrap;
+  }
+
+  .ieread-flow-result-data {
+    width: 100%;
+
+    flex-wrap: wrap;
+  }
+
+}
+
+/* CARL logo in workflow step */
+.ieread-flow-step-icon.carl-logo {
+  background: #ffffff;
+  border: 1px solid #dce4ef;
+  padding: 8px;
+}
+
+.ieread-flow-step-icon.carl-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Reduce space above iEread Workflow */
+.ieread-flow-section {
+  padding-top: 25px !important;
+  padding-bottom: 70px !important;
+}
+
+.ieread-flow-heading {
+  margin-top: 0 !important;
+  margin-bottom: 38px !important;
+}
+
+/* =========================================================
+   STEP 8 - iEread Workflow Polish
+========================================================= */
+
+/* Workflow cards */
+.ieread-flow-step {
+  border: 1px solid #dfe7f3 !important;
+  background: #ffffff !important;
+
+  box-shadow:
+    0 10px 28px rgba(20, 60, 110, 0.08);
+
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease,
+    border-color 0.28s ease;
+}
+
+
+/* Hover effect */
+.ieread-flow-step:hover {
+  transform: translateY(-8px);
+
+  border-color: #99bdf4 !important;
+
+  box-shadow:
+    0 22px 45px rgba(20, 75, 160, 0.16);
+}
+
+
+/* Step number */
+.ieread-flow-step-number {
+  width: 25px;
+  height: 25px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: #f0f5ff;
+
+  color: #1473e6 !important;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+
+/* Main icon */
+.ieread-flow-step-icon {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+
+/* Animate icon on hover */
+.ieread-flow-step:hover
+.ieread-flow-step-icon {
+  transform: scale(1.08);
+
+  box-shadow:
+    0 10px 24px rgba(20, 115, 230, 0.18);
+}
+
+
+/* Better arrows */
+.ieread-flow-connector {
+  width: 52px !important;
+  color: #1473e6 !important;
+}
+
+
+.ieread-flow-connector span {
+  height: 2px !important;
+
+  background: linear-gradient(
+    90deg,
+    #38bdf8,
+    #5145e5
+  ) !important;
+}
+
+
+/* Moving arrow */
+.ieread-flow-connector i {
+  width: 25px;
+  height: 25px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: #ffffff !important;
+
+  color: #1473e6;
+
+  box-shadow:
+    0 4px 12px rgba(20, 115, 230, 0.15);
+
+  animation:
+    iereadWorkflowArrow
+    1.8s ease-in-out infinite;
+}
+
+
+@keyframes iereadWorkflowArrow {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(5px);
+  }
+
+}
+
+
+/* Upload icon */
+.ieread-flow-step:nth-of-type(1)
+.ieread-flow-step-icon {
+  background: #eaf3ff !important;
+  color: #1473e6 !important;
+}
+
+
+/* AI icon */
+.ieread-flow-step:nth-of-type(3)
+.ieread-flow-step-icon {
+  background: #f0ecff !important;
+  color: #5145e5 !important;
+}
+
+
+/* Match icon */
+.ieread-flow-step:nth-of-type(5)
+.ieread-flow-step-icon {
+  background: #e8f8ff !important;
+  color: #0ea5d9 !important;
+}
+
+
+/* Validation icon */
+.ieread-flow-step:nth-of-type(7)
+.ieread-flow-step-icon {
+  background: #eafaf0 !important;
+  color: #16a34a !important;
+}
+
+
+/* CARL card */
+.ieread-flow-step:last-child {
+  border: 2px solid #d5dcff !important;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f5f4ff
+    ) !important;
+}
+
+
+/* CARL logo box */
+.ieread-flow-step-icon.carl-logo {
+  width: 72px !important;
+  height: 58px !important;
+
+  padding: 7px !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #dce3ef;
+
+  box-shadow:
+    0 8px 20px rgba(45, 52, 150, 0.10);
+}
+
+
+.ieread-flow-step-icon.carl-logo img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+}
+
+
+/* Highlight Send to CARL heading */
+.ieread-flow-step:last-child h3 {
+  color: #4138bf;
+}
+
+
+/* Result bar */
+.ieread-flow-result {
+  border-color: #d8e2f5 !important;
+
+  box-shadow:
+    0 10px 30px rgba(32, 67, 117, 0.08);
+}
+
+
+.ieread-flow-result-icon {
+  box-shadow:
+    0 6px 18px rgba(22, 163, 74, 0.18);
+}
+
+
+/* Mobile */
+@media (max-width: 1050px) {
+
+  .ieread-flow-step:hover {
+    transform: translateY(-4px);
+  }
+
+}
+
+/* =========================================================
+   STEP 9 - How iEread Helps
+========================================================= */
+
+.ieread-help-section {
+  padding: clamp(65px, 7vw, 100px) 0;
+
+  background:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(20, 115, 230, 0.08),
+      transparent 28%
+    ),
+    #ffffff;
+}
+
+
+.ieread-help-heading {
+  max-width: 780px;
+
+  margin: 0 auto 42px;
+
+  text-align: center;
+}
+
+
+.ieread-help-heading > span {
+  color: #1473e6;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  letter-spacing: .12em;
+}
+
+
+.ieread-help-heading h2 {
+  margin: 12px 0 15px;
+
+  color: #092747;
+
+  font-size: clamp(34px, 4vw, 52px);
+
+  line-height: 1.1;
+
+  letter-spacing: -.04em;
+}
+
+
+.ieread-help-heading h2 strong {
+  color: #5145e5;
+}
+
+
+.ieread-help-heading p {
+  max-width: 650px;
+
+  margin: 0 auto;
+
+  color: #75859a;
+
+  font-size: 16px;
+
+  line-height: 1.7;
+}
+
+
+.ieread-help-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+
+.ieread-help-card {
+  position: relative;
+
+  min-height: 290px;
+
+  padding: 25px;
+
+  border: 1px solid #e0e7f1;
+
+  border-radius: 20px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 10px 28px
+    rgba(32, 66, 112, 0.07);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    border-color .25s ease;
+}
+
+
+.ieread-help-card:hover {
+  transform: translateY(-7px);
+
+  border-color: #aec8f4;
+
+  box-shadow:
+    0 22px 44px
+    rgba(32, 70, 130, 0.14);
+}
+
+
+.ieread-help-icon {
+  width: 52px;
+  height: 52px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 14px;
+
+  background: #eaf3ff;
+
+  color: #1473e6;
+
+  font-size: 21px;
+}
+
+
+.ieread-help-icon.purple {
+  background: #f0edff;
+  color: #5145e5;
+}
+
+
+.ieread-help-icon.cyan {
+  background: #e8f8ff;
+  color: #0ea5d9;
+}
+
+
+.ieread-help-icon.green {
+  background: #eafaf0;
+  color: #16a34a;
+}
+
+
+.ieread-help-icon.orange {
+  background: #fff5e7;
+  color: #e58a17;
+}
+
+
+.ieread-help-icon.carl-help {
+  background:
+    linear-gradient(
+      135deg,
+      #1473e6,
+      #5145e5
+    );
+
+  color: #ffffff;
+}
+
+
+.ieread-help-index {
+  position: absolute;
+
+  top: 22px;
+  right: 23px;
+
+  color: #a1adbc;
+
+  font-size: 11px;
+
+  font-weight: 800;
+}
+
+
+.ieread-help-card h3 {
+  margin: 21px 0 6px;
+
+  color: #12304e;
+
+  font-size: 20px;
+}
+
+
+.ieread-help-card > strong {
+  color: #1473e6;
+
+  font-size: 13px;
+
+  line-height: 1.45;
+}
+
+
+.ieread-help-card > p {
+  margin: 12px 0 20px;
+
+  color: #708195;
+
+  font-size: 14px;
+
+  line-height: 1.65;
+}
+
+
+.ieread-help-tags {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 7px;
+}
+
+
+.ieread-help-tags span {
+  padding: 6px 9px;
+
+  border-radius: 30px;
+
+  background: #f1f5fb;
+
+  color: #526b84;
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+
+@media (max-width: 950px) {
+
+  .ieread-help-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .ieread-help-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ieread-help-card {
+    min-height: 0;
+  }
+
+}
+
+/* Reduce space before How iEread Helps section */
+
+.ieread-flow-section {
+  padding-bottom: 30px !important;
+}
+
+.ieread-help-section {
+  padding-top: 25px !important;
+  padding-bottom: 70px !important;
+}
+
+.ieread-help-heading {
+  margin-top: 0 !important;
+  margin-bottom: 35px !important;
+}
+
+/* =========================================================
+   STEP 10 - About iEread
+========================================================= */
+
+.ieread-about-section {
+  padding: clamp(65px, 7vw, 95px) 0;
+
+  background:
+    radial-gradient(
+      circle at 90% 15%,
+      rgba(81, 69, 229, 0.08),
+      transparent 30%
+    ),
+    #f8faff;
+}
+
+
+.ieread-about-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(400px, .9fr);
+
+  gap: clamp(45px, 6vw, 90px);
+
+  align-items: center;
+}
+
+
+/* LEFT */
+
+.ieread-about-label {
+  color: #1473e6;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: .12em;
+}
+
+
+.ieread-about-copy h2 {
+  max-width: 650px;
+
+  margin: 13px 0 22px;
+
+  color: #092747;
+
+  font-size: clamp(36px, 4vw, 56px);
+
+  line-height: 1.08;
+
+  letter-spacing: -.045em;
+}
+
+
+.ieread-about-copy h2 strong {
+  color: #5145e5;
+}
+
+
+.ieread-about-copy > p {
+  max-width: 680px;
+
+  margin: 0 0 16px;
+
+  color: #718198;
+
+  font-size: 16px;
+
+  line-height: 1.8;
+}
+
+
+/* NOTE */
+
+.ieread-about-note {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  max-width: 650px;
+
+  margin-top: 25px;
+
+  padding: 15px 17px;
+
+  border-radius: 13px;
+
+  background: #edf4ff;
+
+  color: #3a5877;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+
+.ieread-about-note i {
+  margin-top: 3px;
+
+  color: #1473e6;
+
+  font-size: 17px;
+}
+
+
+/* RIGHT CARDS */
+
+.ieread-about-cards {
+  display: grid;
+
+  gap: 13px;
+}
+
+
+.ieread-about-card {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 16px;
+
+  padding: 20px;
+
+  border: 1px solid #e0e7f2;
+
+  border-radius: 17px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 9px 25px
+    rgba(31, 67, 115, .07);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+
+.ieread-about-card:hover {
+  transform: translateX(6px);
+
+  box-shadow:
+    0 16px 34px
+    rgba(31, 67, 115, .12);
+}
+
+
+.ieread-about-card-icon {
+  width: 48px;
+  height: 48px;
+
+  flex: none;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 13px;
+
+  background: #eaf3ff;
+
+  color: #1473e6;
+
+  font-size: 19px;
+}
+
+
+.ieread-about-card-icon.purple {
+  background: #f0edff;
+  color: #5145e5;
+}
+
+
+.ieread-about-card-icon.green {
+  background: #eafaf0;
+  color: #16a34a;
+}
+
+
+.ieread-about-card small {
+  color: #8795a7;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  letter-spacing: .10em;
+}
+
+
+.ieread-about-card h3 {
+  margin: 5px 0 6px;
+
+  color: #14314e;
+
+  font-size: 17px;
+}
+
+
+.ieread-about-card p {
+  margin: 0;
+
+  color: #718196;
+
+  font-size: 13px;
+
+  line-height: 1.55;
+}
+
+
+/* MANUAL -> AI BAR */
+
+.ieread-about-result {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+
+  margin-top: 8px;
+
+  padding: 16px 18px;
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      100deg,
+      #eef5ff,
+      #f4f1ff
+    );
+
+  border: 1px solid #dce5f4;
+}
+
+
+.ieread-about-result > div:not(.ieread-about-result-line) {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+
+.ieread-about-result > div > span {
+  width: 30px;
+  height: 30px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #8191a5;
+}
+
+
+.ieread-about-result > div > span.active {
+  background:
+    linear-gradient(
+      135deg,
+      #1473e6,
+      #5145e5
+    );
+
+  color: #ffffff;
+}
+
+
+.ieread-about-result small {
+  color: #536c86;
+
+  font-size: 9px;
+
+  font-weight: 800;
+}
+
+
+.ieread-about-result-line {
+  flex: 1;
+
+  height: 2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #9dc8f3,
+      #5145e5
+    );
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+
+  .ieread-about-layout {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .ieread-about-section {
+    padding-top: 40px;
+  }
+
+  .ieread-about-result {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ieread-about-result-line {
+    width: 2px;
+    height: 25px;
+
+    margin-left: 14px;
+  }
+
+}
+
+/* =========================================================
+   iEread Locations - Clean Style
+   Keep existing font sizes
+========================================================= */
+
+.ieng-locations {
+  background: #f7f9fd !important;
+  padding-top: 45px !important;
+  padding-bottom: 55px !important;
+}
+
+
+/* 3 cards */
+.ieng-loc-grid {
+  align-items: stretch !important;
+  gap: 22px !important;
+}
+
+
+/* Card */
+.ieng-loc-card {
+  min-height: 0 !important;
+
+  padding: 24px !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #dce5f0 !important;
+  border-top: 4px solid #1473e6 !important;
+
+  border-radius: 18px !important;
+
+  box-shadow:
+    0 10px 28px
+    rgba(27, 61, 105, 0.07) !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease !important;
+}
+
+
+.ieng-loc-card:hover {
+  transform: translateY(-5px);
+
+  box-shadow:
+    0 18px 38px
+    rgba(27, 61, 105, 0.13) !important;
+}
+
+
+/* Different top colour for each location */
+
+.ieng-loc-card--au {
+  border-top-color: #1473e6 !important;
+}
+
+.ieng-loc-card--in {
+  border-top-color: #5145e5 !important;
+}
+
+.ieng-loc-card--fj {
+  border-top-color: #20a8dc !important;
+}
+
+
+/* Header */
+
+.ieng-loc-head {
+  display: flex !important;
+
+  align-items: center !important;
+
+  gap: 14px !important;
+
+  margin-bottom: 18px !important;
+}
+
+
+/* Location icon */
+
+.ieng-loc-icon {
+  flex: none;
+
+  background: #eaf3ff !important;
+
+  color: #1473e6 !important;
+
+  border-radius: 12px !important;
+}
+
+
+.ieng-loc-card--in .ieng-loc-icon {
+  background: #f0edff !important;
+  color: #5145e5 !important;
+}
+
+
+.ieng-loc-card--fj .ieng-loc-icon {
+  background: #e8f8ff !important;
+  color: #19a6d7 !important;
+}
+
+
+/* Title */
+
+.ieng-loc-title {
+  color: #0b2948 !important;
+}
+
+
+/* Phone / Email */
+
+.ieng-loc-row {
+  color: #647890 !important;
+
+  margin-bottom: 8px !important;
+}
+
+
+.ieng-loc-row strong {
+  color: #435d78 !important;
+}
+
+
+.ieng-loc-row a {
+  color: #4e6985 !important;
+
+  text-decoration: none !important;
+}
+
+
+.ieng-loc-row a:hover {
+  color: #1473e6 !important;
+}
+
+
+/* Address */
+
+.ieng-loc-address {
+  color: #74859a !important;
+
+  margin-top: 10px !important;
+  margin-bottom: 22px !important;
+}
+
+
+/* View Map */
+
+.ieng-loc-btn {
+  margin-top: auto !important;
+
+  align-self: flex-start !important;
+
+  display: inline-flex !important;
+
+  align-items: center !important;
+
+  justify-content: center !important;
+
+  background: #ffffff !important;
+
+  color: #1473e6 !important;
+
+  border: 1px solid #1473e6 !important;
+
+  border-radius: 9px !important;
+
+  padding: 9px 16px !important;
+
+  text-decoration: none !important;
+
+  box-shadow: none !important;
+
+  transition:
+    background .2s ease,
+    color .2s ease,
+    transform .2s ease !important;
+}
+
+
+.ieng-loc-btn:hover {
+  background: #1473e6 !important;
+
+  color: #ffffff !important;
+
+  transform: translateY(-2px);
+}
+
+
+/* Mobile */
+
+@media (max-width: 850px) {
+
+  .ieng-loc-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+}
+@media (min-width: 1051px) {
+  .boiler-hero-card {
+    position: relative;
+    top: -25px;
+    left: 22px;
+  }
+}
+
+  </style>
+
+  <link rel="icon" href="{% static 'images/logo1.png' %}">
+
+  <link rel="stylesheet"
+
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
+<body>
+
+  <!-- Google Tag Manager (noscript) -->
+
+  <noscript>
+
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TKQV8LKX"
+
+            height="0"
+
+            width="0"
+
+            style="display:none;visibility:hidden"></iframe>
+
+  </noscript>
+
+  <!-- End Google Tag Manager (noscript) -->
+
+  {% include 'header.html' %}
+
+  {% include 'request_demo_modal.html' %}
+
+  <!-- ============ HERO ============ -->
+
+<section class="boiler-hero" id="home">
+
+  <div class="boiler-container">
+
+    <div class="boiler-hero-inner">
+
+      <div class="boiler-hero-left boiler-reveal">
+
+        <div class="boiler-hero-kicker">
+
+          <span>
+
+            <i
+              class="fa-solid fa-gauge-high"
+              aria-hidden="true"
+            ></i>
+
+            AI-Powered Meter Reading
+
+          </span>
+
+        </div>
+
+
+        <h1 class="boiler-hero-title">
+
+          Turn meter images into
+
+          <br>
+
+          <span>
+            reliable digital readings.
+          </span>
+
+        </h1>
+
+
+        <p class="boiler-hero-sub">
+
+          iEread uses AI to extract meter information
+          from images, PDFs and supported documents,
+          reducing manual meter-reading effort.
+
+        </p>
+
+
+        <p class="boiler-hero-sub">
+
+          Automatically identify meter readings,
+          asset information, units and Reading Points,
+          validate the information, and prepare the
+          data for CARL CMMS.
+
+        </p>
+
+
+        <div class="boiler-hero-cta">
+
+          <a
+            href="#process"
+            class="boiler-btn-primary"
+          >
+
+            See how iEread works
+
+            <i
+              class="fa-solid fa-arrow-right"
+              aria-hidden="true"
+            ></i>
+
+          </a>
+
+
+          <a
+  href="#"
+  class="boiler-btn-ghost"
+  data-open-demo
+>
+  Request a Demo
+</a>
+
+        </div>
+
+
+        <div class="hero-proof">
+
+          <span>
+            <i class="fa-solid fa-check"></i>
+            Images &amp; PDFs
+          </span>
+
+          <span>
+            <i class="fa-solid fa-check"></i>
+            AI Extraction
+          </span>
+
+          <span>
+            <i class="fa-solid fa-check"></i>
+            Smart Validation
+          </span>
+
+          <span>
+            <i class="fa-solid fa-check"></i>
+            CARL Integration
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="boiler-hero-media boiler-reveal">
+
+        <div class="boiler-hero-card">
+
+          <a
+            class="ietrack-real-screen-link"
+            href="{% static 'images/dashboard.png' %}"
+            target="_blank"
+            rel="noopener"
+            aria-label="Open iEread dashboard image"
+          >
+
+            <img
+              class="ietrack-real-screen"
+              src="{% static 'images/dashboard.png' %}"
+              alt="iEread AI-powered meter reading dashboard"
+              fetchpriority="high"
+            >
+
+          </a>
+
+
+          <div class="boiler-hero-meta">
+
+            <h3>
+              AI-powered meter processing
+            </h3>
+
+            <p>
+              Upload meter files, extract readings,
+              validate information and prepare approved
+              values for CARL.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+  <!-- ============ FEATURES ============ -->
+ <!-- ============ FEATURES ============ -->
+
+<section class="boiler-types" id="types">
+
+  <div class="boiler-container">
+
+    <div class="boiler-types-head">
+
+      <div>
+
+        <div class="boiler-types-kicker">
+          iEread Features
+        </div>
+
+        <h2 class="boiler-types-title">
+          From meter image to validated CARL reading.
+        </h2>
+
+      </div>
+
+      <p class="boiler-types-sub">
+        iEread combines AI-powered extraction,
+        asset matching, validation and CARL integration
+        in one connected meter-reading workflow.
+      </p>
+
+    </div>
+
+
+    <div class="ietrack-feature-explorer">
+
+      <!-- LEFT SIDE -->
+
+      <div class="ietrack-feature-chart-area">
+
+        <div
+          class="ietrack-feature-chart"
+          role="img"
+          aria-label="iEread feature categories"
+          style="
+            --chart-segments:
+            #1473e6 0% 20%,
+            #5145e5 20% 40%,
+            #29a8e8 40% 60%,
+            #16a34a 60% 80%,
+            #7567d9 80% 100%;
+          "
+        >
+
+          <span
+            class="ietrack-chart-icon"
+            style="--icon-x:69%;--icon-y:18%"
+          >
+            <i class="fa-solid fa-brain"></i>
+          </span>
+
+          <span
+            class="ietrack-chart-icon"
+            style="--icon-x:84%;--icon-y:64%"
+          >
+            <i class="fa-solid fa-link"></i>
+          </span>
+
+          <span
+            class="ietrack-chart-icon"
+            style="--icon-x:42%;--icon-y:86%"
+          >
+            <i class="fa-solid fa-circle-check"></i>
+          </span>
+
+          <span
+            class="ietrack-chart-icon"
+            style="--icon-x:14%;--icon-y:56%"
+          >
+            <i class="fa-solid fa-database"></i>
+          </span>
+
+          <span
+            class="ietrack-chart-icon"
+            style="--icon-x:31%;--icon-y:18%"
+          >
+            <i class="fa-solid fa-layer-group"></i>
+          </span>
+
+          <span class="ietrack-feature-chart-center">
+
+            <strong>AI</strong>
+
+            <span>
+              Meter Reading
+            </span>
+
+          </span>
+
+        </div>
+
+
+        <p class="ietrack-feature-chart-caption">
+          Explore by area
+        </p>
+
+
+        <div
+          class="ietrack-feature-tabs"
+          aria-label="iEread feature categories"
+        >
+
+          <button
+            type="button"
+            class="ietrack-feature-tab"
+            data-feature-category="0"
+            aria-controls="ietrack-feature-panel-0"
+            aria-pressed="true"
+          >
+
+            <span
+              class="ietrack-feature-dot"
+              style="--feature-color:#1473e6"
+            ></span>
+
+            <span>
+              AI Meter Reading
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="ietrack-feature-tab"
+            data-feature-category="1"
+            aria-controls="ietrack-feature-panel-1"
+            aria-pressed="false"
+          >
+
+            <span
+              class="ietrack-feature-dot"
+              style="--feature-color:#5145e5"
+            ></span>
+
+            <span>
+              Asset &amp; Reading Point Match
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="ietrack-feature-tab"
+            data-feature-category="2"
+            aria-controls="ietrack-feature-panel-2"
+            aria-pressed="false"
+          >
+
+            <span
+              class="ietrack-feature-dot"
+              style="--feature-color:#29a8e8"
+            ></span>
+
+            <span>
+              Smart Validation
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="ietrack-feature-tab"
+            data-feature-category="3"
+            aria-controls="ietrack-feature-panel-3"
+            aria-pressed="false"
+          >
+
+            <span
+              class="ietrack-feature-dot"
+              style="--feature-color:#16a34a"
+            ></span>
+
+            <span>
+              CARL Integration
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="ietrack-feature-tab"
+            data-feature-category="4"
+            aria-controls="ietrack-feature-panel-4"
+            aria-pressed="false"
+          >
+
+            <span
+              class="ietrack-feature-dot"
+              style="--feature-color:#7567d9"
+            ></span>
+
+            <span>
+              Batch Processing
+            </span>
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- RIGHT SIDE -->
+
+      <div class="ietrack-feature-panels">
+
+
+        <!-- CATEGORY 01 -->
+
+        <section
+          class="ietrack-feature-panel"
+          id="ietrack-feature-panel-0"
+          data-feature-panel="0"
+        >
+
+          <div class="ietrack-feature-panel-head">
+
+            <div>
+
+              <span class="ietrack-feature-overline">
+                CATEGORY 01 / 05
+              </span>
+
+              <h3 class="ietrack-feature-group-title">
+                AI Meter Reading
+              </h3>
+
+            </div>
+
+            <span class="ietrack-feature-panel-count">
+              4 features
+            </span>
+
+          </div>
+
+
+          <div class="boiler-types-grid">
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-camera"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Meter Image Processing
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Extract meter information from uploaded
+                photographs using AI-powered processing.
+              </p>
+
+            </details>
+
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-file-pdf"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  PDF &amp; Document Processing
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Process meter records from PDFs,
+                TIFF files and supported documents.
+              </p>
+
+            </details>
+
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-gauge-high"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Reading Extraction
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Automatically identify the meter reading
+                displayed in the uploaded file.
+              </p>
+
+            </details>
+
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-ruler"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Unit Detection
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Detect relevant meter units such as
+                kWh, m³ and other supported units.
+              </p>
+
+            </details>
+
+          </div>
+
+        </section>
+
+
+        <!-- CATEGORY 02 -->
+
+        <section
+          class="ietrack-feature-panel"
+          id="ietrack-feature-panel-1"
+          data-feature-panel="1"
+          hidden
+        >
+
+          <div class="ietrack-feature-panel-head">
+
+            <div>
+
+              <span class="ietrack-feature-overline">
+                CATEGORY 02 / 05
+              </span>
+
+              <h3 class="ietrack-feature-group-title">
+                Asset &amp; Reading Point Match
+              </h3>
+
+            </div>
+
+            <span class="ietrack-feature-panel-count">
+              3 features
+            </span>
+
+          </div>
+
+
+          <div class="boiler-types-grid">
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-barcode"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Asset Identification
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Match extracted meter information
+                with the corresponding CARL asset.
+              </p>
+
+            </details>
+
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-location-crosshairs"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Reading Point Matching
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Identify the appropriate Reading Point
+                associated with the selected asset.
+              </p>
+
+            </details>
+
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-link"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  CARL Record Matching
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Compare extracted information with
+                asset and Reading Point records in CARL.
+              </p>
+
+            </details>
+
+          </div>
+
+        </section>
+
+
+        <!-- CATEGORY 03 -->
+
+        <section
+          class="ietrack-feature-panel"
+          id="ietrack-feature-panel-2"
+          data-feature-panel="2"
+          hidden
+        >
+
+          <div class="ietrack-feature-panel-head">
+
+            <div>
+
+              <span class="ietrack-feature-overline">
+                CATEGORY 03 / 05
+              </span>
+
+              <h3 class="ietrack-feature-group-title">
+                Smart Validation
+              </h3>
+
+            </div>
+
+            <span class="ietrack-feature-panel-count">
+              4 features
+            </span>
+
+          </div>
+
+
+          <div class="boiler-types-grid">
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-circle-check"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Reading Validation
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Check extracted values before
+                they are submitted to CARL.
+              </p>
+
+            </details>
+
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-arrow-up-wide-short"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Range Validation
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Check meter readings against
+                configured Reading Point ranges.
+              </p>
+
+            </details>
+
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-calculator"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Decimal Validation
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Validate decimal formatting and
+                reading precision before submission.
+              </p>
+
+            </details>
+
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Error Detection
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Highlight records that require
+                correction or manual review.
+              </p>
+
+            </details>
+
+          </div>
+
+        </section>
+
+
+        <!-- CATEGORY 04 -->
+
+        <section
+          class="ietrack-feature-panel"
+          id="ietrack-feature-panel-3"
+          data-feature-panel="3"
+          hidden
+        >
+
+          <div class="ietrack-feature-panel-head">
+
+            <div>
+
+              <span class="ietrack-feature-overline">
+                CATEGORY 04 / 05
+              </span>
+
+              <h3 class="ietrack-feature-group-title">
+                CARL Integration
+              </h3>
+
+            </div>
+
+            <span class="ietrack-feature-panel-count">
+              3 features
+            </span>
+
+          </div>
+
+
+          <div class="boiler-types-grid">
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Send Readings to CARL
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Send validated meter readings
+                to the appropriate CARL Reading Point.
+              </p>
+
+            </details>
+
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-database"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Connected CARL Data
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Use CARL asset and Reading Point
+                information as part of processing.
+              </p>
+
+            </details>
+
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-shield-halved"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  CARL Validation Rules
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                CARL continues to apply its
+                configured validation rules to submitted readings.
+              </p>
+
+            </details>
+
+          </div>
+
+        </section>
+
+
+        <!-- CATEGORY 05 -->
+
+        <section
+          class="ietrack-feature-panel"
+          id="ietrack-feature-panel-4"
+          data-feature-panel="4"
+          hidden
+        >
+
+          <div class="ietrack-feature-panel-head">
+
+            <div>
+
+              <span class="ietrack-feature-overline">
+                CATEGORY 05 / 05
+              </span>
+
+              <h3 class="ietrack-feature-group-title">
+                Batch Processing
+              </h3>
+
+            </div>
+
+            <span class="ietrack-feature-panel-count">
+              3 features
+            </span>
+
+          </div>
+
+
+          <div class="boiler-types-grid">
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-images"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Multiple Meter Images
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Upload multiple meter images
+                and process them together.
+              </p>
+
+            </details>
+
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-file-lines"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Multi-page Documents
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Process multiple meter records
+                contained across PDF pages.
+              </p>
+
+            </details>
+
+
+            <details class="ietrack-feature">
+
+              <summary>
+
+                <span class="feature-icon">
+                  <i class="fa-solid fa-table-list"></i>
+                </span>
+
+                <span class="boiler-type-title">
+                  Results Dashboard
+                </span>
+
+                <i class="fa-solid fa-chevron-down ietrack-feature-chevron"></i>
+
+              </summary>
+
+              <p class="boiler-type-text">
+                Review successful, rejected and
+                review-required meter records together.
+              </p>
+
+            </details>
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+ 
+
+
+
+ <!-- ============ OVERVIEW ============ -->
+
+<section class="ieread-overview" id="overview">
+
+  <div class="boiler-container">
+
+    <div class="ieread-overview-layout">
+
+      <!-- LEFT SIDE -->
+
+      <div class="ieread-overview-copy boiler-reveal">
+
+        <span class="ieread-section-label">
+          AI-Powered Meter Processing
+        </span>
+
+        <h2>
+          From meter file to
+          <span>CARL-ready data.</span>
+        </h2>
+
+        <p>
+          iEread transforms meter images and documents
+          into structured meter information using AI.
+          It helps reduce repetitive manual entry while
+          improving the consistency of meter-reading data.
+        </p>
+
+        <p>
+          The extracted information is matched with CARL
+          assets and Reading Points, validated, and prepared
+          for submission to CARL CMMS.
+        </p>
+
+
+        <div class="ieread-overview-benefits">
+
+          <div>
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+            <span>
+              <strong>AI Extraction</strong>
+              <small>Read meter information automatically</small>
+            </span>
+          </div>
+
+
+          <div>
+            <i class="fa-solid fa-link"></i>
+
+            <span>
+              <strong>Asset Matching</strong>
+              <small>Connect readings with CARL assets</small>
+            </span>
+          </div>
+
+
+          <div>
+            <i class="fa-solid fa-circle-check"></i>
+
+            <span>
+              <strong>Smart Validation</strong>
+              <small>Check reading, unit and range</small>
+            </span>
+          </div>
+
+
+          <div>
+            <i class="fa-solid fa-database"></i>
+
+            <span>
+              <strong>CARL Integration</strong>
+              <small>Submit validated readings</small>
+            </span>
+          </div>
+
+        </div>
+
+
+        <a href="#process" class="ieread-overview-link">
+
+          Explore the workflow
+
+          <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+      </div>
+
+
+      <!-- RIGHT SIDE -->
+
+      <div class="ieread-overview-card boiler-reveal">
+
+
+        <!-- CARD HEADER -->
+
+        <div class="ieread-overview-card-head">
+
+          <div>
+
+            <span class="ieread-overview-card-icon">
+              <i class="fa-solid fa-brain"></i>
+            </span>
+
+            <div>
+              <strong>iEread</strong>
+              <small>Meter data processing</small>
+            </div>
+
+          </div>
+
+
+          <span class="ieread-system-status">
+
+            <i></i>
+
+            Ready
+
+          </span>
+
+        </div>
+
+
+        <!-- INPUT -->
+
+        <div class="ieread-pipeline-row">
+
+          <div class="ieread-pipeline-number">
+            01
+          </div>
+
+          <div class="ieread-pipeline-icon">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+          </div>
+
+          <div class="ieread-pipeline-copy">
+
+            <small>INPUT</small>
+
+            <strong>Meter file uploaded</strong>
+
+            <span>
+              Image · PDF · TIFF · Document
+            </span>
+
+          </div>
+
+          <span class="ieread-pipeline-done">
+            <i class="fa-solid fa-check"></i>
+          </span>
+
+        </div>
+
+
+        <!-- AI EXTRACTION -->
+
+        <div class="ieread-pipeline-row">
+
+          <div class="ieread-pipeline-number">
+            02
+          </div>
+
+          <div class="ieread-pipeline-icon purple">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+
+          <div class="ieread-pipeline-copy">
+
+            <small>AI EXTRACTION</small>
+
+            <strong>Meter information detected</strong>
+
+            <span>
+              Asset · Reading · Unit
+            </span>
+
+          </div>
+
+          <span class="ieread-pipeline-done">
+            <i class="fa-solid fa-check"></i>
+          </span>
+
+        </div>
+
+
+        <!-- VALIDATION -->
+
+        <div class="ieread-pipeline-row">
+
+          <div class="ieread-pipeline-number">
+            03
+          </div>
+
+          <div class="ieread-pipeline-icon cyan">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+
+          <div class="ieread-pipeline-copy">
+
+            <small>VALIDATION</small>
+
+            <strong>Reading checked</strong>
+
+            <span>
+              Asset · Reading Point · Range
+            </span>
+
+          </div>
+
+          <span class="ieread-pipeline-done">
+            <i class="fa-solid fa-check"></i>
+          </span>
+
+        </div>
+
+
+        <!-- RESULT DATA -->
+
+        <div class="ieread-result-card">
+
+          <div class="ieread-result-title">
+
+            <span>
+              Extracted Meter Data
+            </span>
+
+            <span class="ieread-valid-badge">
+              Validated
+            </span>
+
+          </div>
+
+
+          <div class="ieread-result-fields">
+
+            <div>
+  <small>Asset Code</small>
+  <strong>MA-00098</strong>
+</div>
+
+<div>
+  <small>Reading</small>
+  <strong>018763.2</strong>
+</div>
+
+<div>
+  <small>Unit</small>
+  <strong>kWh</strong>
+</div>
+
+<div>
+  <small>Reading Point</small>
+  <strong>MP-00100</strong>
+</div>
+
+          </div>
+
+        </div>
+
+
+        <!-- CARL -->
+
+        <div class="ieread-carl-ready">
+
+          <span>
+            <i class="fa-solid fa-database"></i>
+          </span>
+
+          <div>
+
+            <small>CARL INTEGRATION</small>
+
+            <strong>
+              Ready to send reading to CARL
+            </strong>
+
+          </div>
+
+          <i class="fa-solid fa-arrow-right"></i>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+ 
+  <!-- ============ iEread WORKFLOW ============ -->
+
+<section class="ieread-flow-section" id="process">
+
+  <div class="boiler-container">
+
+    <div class="ieread-flow-heading boiler-reveal">
+
+      <span>
+        iEread Workflow
+      </span>
+
+      <h2>
+        From meter file to CARL,
+        <strong>automatically.</strong>
+      </h2>
+
+      <p>
+        iEread turns uploaded meter files into
+        validated digital readings through a
+        connected AI-powered workflow.
+      </p>
+
+    </div>
+
+
+    <div class="ieread-flow-pipeline boiler-reveal">
+
+
+      <!-- STEP 1 -->
+
+      <div class="ieread-flow-step">
+
+        <div class="ieread-flow-step-number">
+          01
+        </div>
+
+       <div class="ieread-flow-step-icon cyan">
+
+  <i class="fa-solid fa-magnifying-glass"></i>
+
+</div>
+
+        <h3>
+          Upload
+        </h3>
+
+        <p>
+          Meter images,
+          PDFs or documents
+        </p>
+
+      </div>
+
+
+      <div class="ieread-flow-connector">
+
+        <span></span>
+
+        <i class="fa-solid fa-chevron-right"></i>
+
+      </div>
+
+
+      <!-- STEP 2 -->
+
+      <div class="ieread-flow-step">
+
+        <div class="ieread-flow-step-number">
+          02
+        </div>
+
+        <div class="ieread-flow-step-icon purple">
+
+          <i class="fa-solid fa-brain"></i>
+
+        </div>
+
+        <h3>
+          AI Extract
+        </h3>
+
+        <p>
+          Reading, asset
+          and unit
+        </p>
+
+      </div>
+
+
+      <div class="ieread-flow-connector">
+
+        <span></span>
+
+        <i class="fa-solid fa-chevron-right"></i>
+
+      </div>
+
+
+      <!-- STEP 3 -->
+
+      <div class="ieread-flow-step">
+
+        <div class="ieread-flow-step-number">
+          03
+        </div>
+
+        <div class="ieread-flow-step-icon cyan">
+
+          <i class="fa-solid fa-link"></i>
+
+        </div>
+
+        <h3>
+          Match
+        </h3>
+
+        <p>
+          CARL asset &
+          Reading Point
+        </p>
+
+      </div>
+
+
+      <div class="ieread-flow-connector">
+
+        <span></span>
+
+        <i class="fa-solid fa-chevron-right"></i>
+
+      </div>
+
+
+      <!-- STEP 4 -->
+
+      <div class="ieread-flow-step">
+
+        <div class="ieread-flow-step-number">
+          04
+        </div>
+
+       <div class="ieread-flow-step-icon green">
+
+  <i class="fa-solid fa-circle-check"></i>
+
+</div>
+
+        <h3>
+          Validate
+        </h3>
+
+        <p>
+          Reading, unit,
+          decimal & range
+        </p>
+
+      </div>
+
+
+      <div class="ieread-flow-connector">
+
+        <span></span>
+
+        <i class="fa-solid fa-chevron-right"></i>
+
+      </div>
+
+
+      <!-- STEP 5 -->
+
+      <div class="ieread-flow-step">
+
+        <div class="ieread-flow-step-number">
+          05
+        </div>
+
+       <div class="ieread-flow-step-icon carl-logo">
+
+  <img
+    src="{% static 'images/carl1.png' %}"
+    alt="CARL Source logo"
+  >
+
+</div>
+
+        <h3>
+          Send to CARL
+        </h3>
+
+        <p>
+          Submit validated
+          meter reading
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="ieread-flow-result boiler-reveal">
+
+      <span class="ieread-flow-result-icon">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+      </span>
+
+
+      <div>
+
+        <small>
+          PROCESS COMPLETE
+        </small>
+
+        <strong>
+          Meter reading successfully prepared for CARL.
+        </strong>
+
+      </div>
+
+
+      <div class="ieread-flow-result-data">
+
+        <span>
+          <small>Asset</small>
+          MA-00098
+        </span>
+
+        <span>
+          <small>Reading Point</small>
+          MP-00100
+        </span>
+
+        <span>
+          <small>Reading</small>
+          018763.2 kWh
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ============ HOW iEread HELPS ============ -->
+
+<section class="ieread-help-section" id="how-it-helps">
+
+  <div class="boiler-container">
+
+    <div class="ieread-help-heading boiler-reveal">
+
+      <span>
+        How iEread Helps
+      </span>
+
+      <h2>
+        Better meter data for
+        <strong>maintenance teams.</strong>
+      </h2>
+
+      <p>
+        iEread helps maintenance teams reduce manual meter-entry work,
+        improve data quality and connect validated readings with CARL.
+      </p>
+
+    </div>
+
+
+    <div class="ieread-help-grid">
+
+
+      <!-- 1 -->
+
+      <article class="ieread-help-card boiler-reveal">
+
+        <div class="ieread-help-icon">
+          <i class="fa-solid fa-screwdriver-wrench"></i>
+        </div>
+
+        <span class="ieread-help-index">
+          01
+        </span>
+
+        <h3>
+          Maintenance Technicians
+        </h3>
+
+        <strong>
+          Capture meter readings faster.
+        </strong>
+
+        <p>
+          Upload meter images or documents instead of manually
+          typing every reading into the maintenance system.
+        </p>
+
+        <div class="ieread-help-tags">
+
+          <span>Less manual entry</span>
+
+          <span>Faster capture</span>
+
+        </div>
+
+      </article>
+
+
+      <!-- 2 -->
+
+      <article class="ieread-help-card boiler-reveal">
+
+        <div class="ieread-help-icon purple">
+          <i class="fa-solid fa-user-gear"></i>
+        </div>
+
+        <span class="ieread-help-index">
+          02
+        </span>
+
+        <h3>
+          Maintenance Managers
+        </h3>
+
+        <strong>
+          Work with cleaner meter data.
+        </strong>
+
+        <p>
+          Review structured and validated meter readings before
+          they are submitted to CARL.
+        </p>
+
+        <div class="ieread-help-tags">
+
+          <span>Validated readings</span>
+
+          <span>Fewer entry errors</span>
+
+        </div>
+
+      </article>
+
+
+      <!-- 3 -->
+
+      <article class="ieread-help-card boiler-reveal">
+
+        <div class="ieread-help-icon cyan">
+          <i class="fa-solid fa-cubes"></i>
+        </div>
+
+        <span class="ieread-help-index">
+          03
+        </span>
+
+        <h3>
+          Asset Managers
+        </h3>
+
+        <strong>
+          Connect readings to the right asset.
+        </strong>
+
+        <p>
+          Use extracted asset information to match meter records
+          with CARL assets and Reading Points.
+        </p>
+
+        <div class="ieread-help-tags">
+
+          <span>Asset matching</span>
+
+          <span>Reading Points</span>
+
+        </div>
+
+      </article>
+
+
+      <!-- 4 -->
+
+      <article class="ieread-help-card boiler-reveal">
+
+        <div class="ieread-help-icon green">
+          <i class="fa-solid fa-chart-line"></i>
+        </div>
+
+        <span class="ieread-help-index">
+          04
+        </span>
+
+        <h3>
+          Reliability Engineers
+        </h3>
+
+        <strong>
+          Improve consistency of meter history.
+        </strong>
+
+        <p>
+          More consistent meter data can support trend reviews,
+          condition monitoring and maintenance decisions.
+        </p>
+
+        <div class="ieread-help-tags">
+
+          <span>Consistent data</span>
+
+          <span>Better history</span>
+
+        </div>
+
+      </article>
+
+
+      <!-- 5 -->
+
+      <article class="ieread-help-card boiler-reveal">
+
+        <div class="ieread-help-icon orange">
+          <i class="fa-solid fa-building"></i>
+        </div>
+
+        <span class="ieread-help-index">
+          05
+        </span>
+
+        <h3>
+          Facility Managers
+        </h3>
+
+        <strong>
+          Handle multiple meters more efficiently.
+        </strong>
+
+        <p>
+          Process meter files across facilities, equipment and
+          utility areas using one consistent workflow.
+        </p>
+
+        <div class="ieread-help-tags">
+
+          <span>Multiple meters</span>
+
+          <span>Batch processing</span>
+
+        </div>
+
+      </article>
+
+
+      <!-- 6 -->
+
+      <article class="ieread-help-card boiler-reveal">
+
+        <div class="ieread-help-icon carl-help">
+          <i class="fa-solid fa-database"></i>
+        </div>
+
+        <span class="ieread-help-index">
+          06
+        </span>
+
+        <h3>
+          CARL Administrators
+        </h3>
+
+        <strong>
+          Receive structured meter readings.
+        </strong>
+
+        <p>
+          Send validated readings to the appropriate CARL
+          Reading Point while keeping CARL validation rules in place.
+        </p>
+
+        <div class="ieread-help-tags">
+
+          <span>CARL integration</span>
+
+          <span>Structured data</span>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </div>
+
+</section>
+
+  <!-- ============ ABOUT iEread ============ -->
+
+<section class="ieread-about-section" id="about-us">
+
+  <div class="boiler-container">
+
+    <div class="ieread-about-layout">
+
+      <!-- LEFT CONTENT -->
+
+      <div class="ieread-about-copy boiler-reveal">
+
+        <span class="ieread-about-label">
+          About iEread
+        </span>
+
+        <h2>
+          Smarter meter reading,
+          <strong>less manual work.</strong>
+        </h2>
+
+        <p>
+          iEread is an AI-powered meter reading solution
+          developed by iEngineering Australia to simplify
+          the way meter information is captured, processed
+          and transferred into maintenance systems.
+        </p>
+
+        <p>
+          Instead of manually entering meter readings,
+          users can upload meter images, PDFs and supported
+          documents. iEread extracts the important information,
+          matches it with the relevant asset and Reading Point,
+          validates the data and prepares the reading for CARL.
+        </p>
+
+        <div class="ieread-about-note">
+
+          <i class="fa-solid fa-lightbulb"></i>
+
+          <span>
+            iEread helps transform traditional meter-reading
+            tasks into a faster and more structured digital process.
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- RIGHT SIDE -->
+
+      <div class="ieread-about-cards boiler-reveal">
+
+
+        <!-- CARD 1 -->
+
+        <div class="ieread-about-card">
+
+          <span class="ieread-about-card-icon">
+
+            <i class="fa-solid fa-brain"></i>
+
+          </span>
+
+          <div>
+
+            <small>
+              AI POWERED
+            </small>
+
+            <h3>
+              Automated extraction
+            </h3>
+
+            <p>
+              Extract meter readings and related information
+              directly from uploaded files.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- CARD 2 -->
+
+        <div class="ieread-about-card">
+
+          <span class="ieread-about-card-icon purple">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+          </span>
+
+          <div>
+
+            <small>
+              VALIDATION
+            </small>
+
+            <h3>
+              Cleaner meter data
+            </h3>
+
+            <p>
+              Validate readings, units, decimal values and
+              configured ranges before submission.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- CARD 3 -->
+
+        <div class="ieread-about-card">
+
+          <span class="ieread-about-card-icon green">
+
+            <i class="fa-solid fa-database"></i>
+
+          </span>
+
+          <div>
+
+            <small>
+              CONNECTED
+            </small>
+
+            <h3>
+              CARL integration
+            </h3>
+
+            <p>
+              Match assets and Reading Points and send
+              validated meter readings into CARL CMMS.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- SMALL RESULT -->
+
+        <div class="ieread-about-result">
+
+          <div>
+
+            <span>
+              <i class="fa-solid fa-arrow-down-long"></i>
+            </span>
+
+            <small>
+              MANUAL PROCESS
+            </small>
+
+          </div>
+
+
+          <div class="ieread-about-result-line">
+
+            <span></span>
+
+          </div>
+
+
+          <div>
+
+            <span class="active">
+
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+            </span>
+
+            <small>
+              AI-ASSISTED WORKFLOW
+            </small>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ===== SECTION 3: Locations ===== -->
+
+<section class="ieng-locations" id="locations">
+
+  <div class="ieng-container">
+
+    <div class="ieng-loc-grid">
+
+      <!-- Australia -->
+
+      <article class="ieng-loc-card ieng-loc-card--au">
+
+        <header class="ieng-loc-head">
+
+          <span class="ieng-loc-icon" aria-hidden="true">
+
+            <!-- pin icon -->
+
+            <svg viewBox="0 0 24 24" width="20" height="20">
+
+              <path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"
+
+                fill="currentColor" />
+
+            </svg>
+
+          </span>
+
+          <h4 class="ieng-loc-title">Australia – Sydney</h4>
+
+        </header>
+
+        <p class="ieng-loc-row"><strong>Phone:</strong> +61 (02) 8318 1490</p>
+
+        <p class="ieng-loc-row"><strong>Email:</strong> <a href="mailto:enquiries@iengaust.com.au">enquiries@iengaust.com.au</a></p>
+
+        <p class="ieng-loc-address">Rooty Hill, NSW 2766, Australia</p>
+
+        <a class="ieng-loc-btn" target="_blank" rel="noopener"
+
+           href="https://www.google.com/maps?ll=-33.723524,150.875902&z=5&t=m&hl=en-US&gl=US&mapclient=embed&cid=2860432314088839065">
+
+          View map
+
+        </a>
+
+      </article>
+
+      <!-- India -->
+
+      <article class="ieng-loc-card ieng-loc-card--in">
+
+        <header class="ieng-loc-head">
+
+          <span class="ieng-loc-icon" aria-hidden="true">
+
+            <svg viewBox="0 0 24 24" width="20" height="20">
+
+              <path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"
+
+                fill="currentColor" />
+
+            </svg>
+
+          </span>
+
+          <h4 class="ieng-loc-title">India – Pune</h4>
+
+        </header>
+
+        <p class="ieng-loc-row"><strong>Phone:</strong> +91 9168627258</p>
+
+        <p class="ieng-loc-row"><strong>Email:</strong> <a href="mailto:shila@iengaust.com.au">shila@iengaust.com.au</a></p>
+
+        <p class="ieng-loc-address">
+
+          Navale IT Zone, Office No. 501, 5th Floor, A-Wing, Near Navale Bridge, Mumbai-Bangalore Highway, Narhe,
+
+          Pune – 411041.
+
+        </p>
+
+        <a class="ieng-loc-btn" target="_blank" rel="noopener"
+
+           href="https://www.google.com/maps/place/Navale+IT+Zone+Phase2/@18.4597518,73.8199254,17z/">
+
+          View map
+
+        </a>
+
+      </article>
+
+      <!-- Fiji -->
+
+      <article class="ieng-loc-card ieng-loc-card--fj">
+
+        <header class="ieng-loc-head">
+
+          <span class="ieng-loc-icon" aria-hidden="true">
+
+            <svg viewBox="0 0 24 24" width="20" height="20">
+
+              <path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"
+
+                fill="currentColor" />
+
+            </svg>
+
+          </span>
+
+          <h4 class="ieng-loc-title">Fiji – Suva</h4>
+
+        </header>
+
+        <p class="ieng-loc-row"><strong>Phone:</strong> +679 9488589</p>
+
+        <p class="ieng-loc-row"><strong>Email:</strong> <a href="mailto:enquiries@iengaust.com.au">enquiries@iengaust.com.au</a></p>
+
+        <p class="ieng-loc-address"> Suva, Fiji.</p>
+
+        <a class="ieng-loc-btn" target="_blank" rel="noopener"
+
+           href="https://www.google.com/maps/search/Lot+17,+River+Drive+Pacific+Harbour+Navua+Suva+Fiji/">
+
+          View map
+
+        </a>
+
+      </article>
+
+    </div>
+
+  </div>
+
+</section>
+
+  <!-- CONTACT -->
+
+  <section id="contact">
+
+    {% include "components/contact_block.html" with form_only=True %}
+
+  </section>
+
+  {% include 'footer.html' %}
+
+  <!-- JS includes -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+  <script defer src="{% static 'js/demo_form.js' %}"></script>
+
+  <script defer src="{% static 'js/main.js' %}"></script>
+
+  <!-- Simple reveal script for .boiler-reveal -->
+
+  <script>
+
+    (function () {
+
+      const els = document.querySelectorAll(".boiler-reveal");
+
+      if (!("IntersectionObserver" in window)) {
+
+        els.forEach((el) => el.classList.add("is-visible"));
+
+        return;
+
+      }
+
+      const io = new IntersectionObserver(
+
+        (entries) => {
+
+          entries.forEach((e) => {
+
+            if (e.isIntersecting) {
+
+              e.target.classList.add("is-visible");
+
+              io.unobserve(e.target);
+
+            }
+
+          });
+
+        },
+
+        { threshold: 0.15 }
+
+      );
+
+      els.forEach((el) => io.observe(el));
+
+    })();
+
+  </script>
+
+  <script>
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const tabs = document.querySelectorAll(".boiler-mvv-tab");
+
+    const panels = document.querySelectorAll(".boiler-mvv-content");
+
+    if (!tabs.length) return;
+
+    tabs.forEach((tab) => {
+
+      tab.addEventListener("click", () => {
+
+        const target = tab.dataset.tab;
+
+        // update tabs
+
+        tabs.forEach((t) => t.classList.toggle("is-active", t === tab));
+
+        // update content
+
+        panels.forEach((panel) => {
+
+          const match = panel.dataset.tab === target;
+
+          panel.classList.toggle("is-active", match);
+
+        });
+
+      });
+
+    });
+
+  });
+
+</script>
+
+
+<script>
+  (function () {
+    const explorer = document.querySelector('#types .ietrack-feature-explorer');
+    if (!explorer) return;
+    const buttons = [...explorer.querySelectorAll('[data-feature-category]')];
+    const panels = [...explorer.querySelectorAll('[data-feature-panel]')];
+    function selectFeatureCategory(index) {
+      buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.featureCategory === index)));
+      panels.forEach(panel => { panel.hidden = panel.dataset.featurePanel !== index; });
+    }
+    buttons.forEach(button => button.addEventListener('click', () => selectFeatureCategory(button.dataset.featureCategory)));
+    selectFeatureCategory('0');
+  })();
+</script>
+
+<script>
+  (function () {
+    const process = document.querySelector('#process');
+    if (!process) return;
+    const steps = [...process.querySelectorAll('[data-process-step]')];
+    const panels = [...process.querySelectorAll('[data-process-panel]')];
+    function selectStep(index) {
+      steps.forEach(step => step.setAttribute('aria-pressed', String(step.dataset.processStep === index)));
+      panels.forEach(panel => { panel.hidden = panel.dataset.processPanel !== index; });
+    }
+    steps.forEach(step => step.addEventListener('click', () => selectStep(step.dataset.processStep)));
+    selectStep('0');
+  })();
+</script>
+
+<script>
+  // Keep the illustration aligned with the text after fonts and viewport changes.
+  (function () {
+    const text = document.querySelector('#overview .boiler-overview-main');
+    const media = document.querySelector('#overview .boiler-overview-media');
+    if (!text || !media) return;
+    const desktop = window.matchMedia('(min-width: 901px)');
+    function alignOverviewImage() {
+      if (desktop.matches) {
+        media.style.setProperty('height', Math.ceil(text.getBoundingClientRect().height) + 'px', 'important');
+      } else {
+        media.style.removeProperty('height');
+      }
+    }
+    if ('ResizeObserver' in window) new ResizeObserver(alignOverviewImage).observe(text);
+    window.addEventListener('resize', alignOverviewImage);
+    window.addEventListener('load', alignOverviewImage);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(alignOverviewImage);
+    alignOverviewImage();
+  })();
+</script>
+</body>
+
+</html>
